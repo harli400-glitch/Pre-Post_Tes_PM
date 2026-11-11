@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplikasi Evaluasi Pre-Test & Post-Test Halmahera Utara</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- SheetJS for Excel Export -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f3f4f6;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col justify-between">
+
+  <!-- Header Banner -->
+  <header class="bg-indigo-700 text-white shadow-md sticky top-0 z-20">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <div class="bg-white p-2 rounded-lg text-indigo-700 font-bold text-xl">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg md:text-xl leading-tight">Evaluasi Pembelajaran Mendalam</h1>
+          <p class="text-xs text-indigo-200">Kabupaten Halmahera Utara</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button id="btn-open-dashboard" onclick="askDashboardPassword()" class="bg-indigo-600 hover:bg-indigo-800 text-white px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 border border-indigo-400">
+          <i class="fa-solid fa-chart-line"></i>
+          <span class="hidden sm:inline">Halaman Dua (Nilai)</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-grow w-full">
+
+    <!-- WELCOME / REGISTRATION CARD (If active) -->
+    <div id="section-welcome" class="bg-white rounded-2xl shadow-xl p-6 md:p-8 text-center border border-slate-100 mb-6">
+      <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+        <i class="fa-solid fa-clipboard-list"></i>
+      </div>
+      <h2 class="text-2xl font-bold text-slate-800 mb-2">Selamat Datang di Portal Tes</h2>
+      <p class="text-slate-600 max-w-md mx-auto mb-6 text-sm">
+        Silahkan klik tombol di bawah untuk mengisi data diri dan memulai pengerjaan Pre-Test atau Post-Test.
+      </p>
+      <button onclick="openRegistrationModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-indigo-200 transition transform hover:-translate-y-0.5">
+        <i class="fa-solid fa-pen-to-square mr-2"></i> Isi Formulir Peserta
+      </button>
+    </div>
+
+    <!-- TEST QUESTIONS SECTION (Hidden by default) -->
+    <div id="section-quiz" class="hidden bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+      <!-- Quiz Header Info -->
+      <div class="bg-slate-50 border-b border-slate-200 p-4 md:p-6 flex flex-wrap justify-between items-center gap-4">
+        <div>
+          <span id="quiz-type-badge" class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-100 text-indigo-700 mb-1">
+            Pre-Test
+          </span>
+          <h3 id="quiz-participant-name" class="font-bold text-lg text-slate-800">NAMA PESERTA</h3>
+          <p id="quiz-participant-school" class="text-xs text-slate-500"><i class="fa-solid fa-school mr-1"></i> ASAL SEKOLAH</p>
+        </div>
+        <div class="bg-indigo-50 border border-indigo-100 px-4 py-2 rounded-xl text-center">
+          <span class="text-xs text-slate-500 block">Total Soal</span>
+          <span class="font-bold text-indigo-700 text-lg">10 Butir</span>
+        </div>
+      </div>
+
+      <!-- Questions List -->
+      <form id="form-quiz" onsubmit="submitQuiz(event)" class="p-4 md:p-8 space-y-8">
+        <div id="quiz-questions-container" class="space-y-8">
+          <!-- Dynamic rendering of 10 questions -->
+        </div>
+
+        <div class="pt-6 border-t border-slate-200 flex justify-end">
+          <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-emerald-200 transition flex items-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i> Kirim Jawaban Saya
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- DASHBOARD / HALAMAN DUA (Hidden by default) -->
+    <div id="section-dashboard" class="hidden bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-slate-200">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-file-invoice text-indigo-600"></i> Halaman Dua: Hasil & Nilai Peserta
+          </h2>
+          <p class="text-sm text-slate-500">Rekapitulasi otomatis perbandingan nilai Pre-Test dan Post-Test</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="confirmResetData()" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-xl font-medium text-sm transition flex items-center gap-2 shadow">
+            <i class="fa-solid fa-trash-can"></i> Reset Data
+          </button>
+          <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-medium text-sm transition flex items-center gap-2 shadow">
+            <i class="fa-solid fa-file-excel"></i> Unduh Rekap (Excel)
+          </button>
+          <button onclick="closeDashboard()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-xl font-medium text-sm transition">
+            Tutup Halaman
+          </button>
+        </div>
+      </div>
+
+      <!-- Summary Stats -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
+        <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl">
+          <span class="text-xs text-indigo-600 font-semibold uppercase">Total Peserta Terdaftar</span>
+          <p id="stat-total-students" class="text-2xl font-bold text-indigo-900 mt-1">0</p>
+        </div>
+        <div class="bg-amber-50 border border-amber-100 p-4 rounded-xl">
+          <span class="text-xs text-amber-600 font-semibold uppercase">Rata-Rata Pre-Test</span>
+          <p id="stat-avg-pre" class="text-2xl font-bold text-amber-900 mt-1">0</p>
+        </div>
+        <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
+          <span class="text-xs text-emerald-600 font-semibold uppercase">Rata-Rata Post-Test</span>
+          <p id="stat-avg-post" class="text-2xl font-bold text-emerald-900 mt-1">0</p>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="overflow-x-auto rounded-xl border border-slate-200">
+        <table class="w-full text-left border-collapse text-sm">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+              <th class="p-3">No</th>
+              <th class="p-3">Nama Peserta</th>
+              <th class="p-3">Asal Sekolah</th>
+              <th class="p-3 text-center">Nilai Pre-Test</th>
+              <th class="p-3 text-center">Nilai Post-Test</th>
+              <th class="p-3 text-center">Selisih (&Delta;)</th>
+            </tr>
+          </thead>
+          <tbody id="table-results-body" class="divide-y divide-slate-100 text-slate-700">
+            <!-- Rows rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+    &copy; 2026 - Aplikasi Form Evaluasi Pembelajaran Halmahera Utara.
+  </footer>
+
+  <!-- POP-UP MODAL FORMULIR AWAL -->
+  <div id="modal-registration" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all border border-slate-100 flex flex-col max-h-[90vh]">
+      
+      <!-- Modal Header -->
+      <div class="bg-indigo-700 text-white px-5 py-3.5 flex justify-between items-center shrink-0">
+        <h3 class="font-bold text-base md:text-lg flex items-center gap-2">
+          <i class="fa-solid fa-user-pen"></i> Form Data Peserta Tes
+        </h3>
+      </div>
+
+      <!-- Modal Body (Scrollable if height exceeds screen) -->
+      <div class="p-4 sm:p-6 space-y-4 overflow-y-auto custom-scrollbar flex-grow">
+        
+        <!-- 1. Pilihan Pre-Tes / Post-Tes -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih Jenis Tes <span class="text-rose-500">*</span></label>
+          <div class="grid grid-cols-2 gap-2.5">
+            <label class="cursor-pointer border-2 border-slate-200 rounded-xl p-2.5 flex items-center space-x-2.5 hover:border-indigo-500 transition has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50/50">
+              <input type="radio" name="testType" value="pre" checked onchange="toggleTestTypeMode('pre')" class="accent-indigo-600 w-4 h-4">
+              <span class="font-semibold text-slate-800 text-xs sm:text-sm">Pree-Tes</span>
+            </label>
+            <label class="cursor-pointer border-2 border-slate-200 rounded-xl p-2.5 flex items-center space-x-2.5 hover:border-indigo-500 transition has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50/50">
+              <input type="radio" name="testType" value="post" onchange="toggleTestTypeMode('post')" class="accent-indigo-600 w-4 h-4">
+              <span class="font-semibold text-slate-800 text-xs sm:text-sm">Post-Tes</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- SEARCH PREVIOUS PARTICIPANT (Only for Post-Test) -->
+        <div id="post-test-search-container" class="hidden bg-indigo-50/70 p-3 rounded-xl border border-indigo-100 space-y-1">
+          <label class="block text-xs font-bold text-indigo-900">
+            <i class="fa-solid fa-magnifying-glass text-indigo-600 mr-1"></i> Cari Nama Terdaftar (Post-Test):
+          </label>
+          <div class="relative">
+            <input type="text" id="registered-name-search" placeholder="Ketik nama untuk mencari..." onkeyup="filterRegisteredNames()" class="w-full text-xs sm:text-sm px-3 py-2 border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white uppercase">
+            <div id="registered-names-dropdown" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-32 overflow-y-auto hidden z-20 custom-scrollbar">
+              <!-- Registered names listed here -->
+            </div>
+          </div>
+          <span class="text-[11px] text-indigo-600 block leading-tight">*Pilih nama Anda yang sudah diisi saat Pree-Tes</span>
+        </div>
+
+        <!-- 2. Isian Nama Peserta (Wajib Kapital) & 3. Asal Sekolah & Password -->
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nama Peserta <span class="text-rose-500">*</span></label>
+            <input type="text" id="input-participant-name" oninput="this.value = this.value.toUpperCase()" placeholder="NAMA LENGKAP (KAPITAL)" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs sm:text-sm font-medium uppercase tracking-wide">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Asal Sekolah <span class="text-rose-500">*</span></label>
+            <div class="relative">
+              <input type="text" id="input-school-search" placeholder="Ketik nama / nomor sekolah..." onkeyup="filterSchoolOptions()" onfocus="showSchoolDropdown()" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs sm:text-sm font-medium uppercase">
+              <i class="fa-solid fa-chevron-down absolute right-3 top-3 text-slate-400 text-xs pointer-events-none"></i>
+              
+              <!-- Dropdown options -->
+              <div id="school-dropdown" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-40 overflow-y-auto hidden z-30 custom-scrollbar divide-y divide-slate-100">
+                <!-- Schools will be inserted dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- POST TEST PASSWORD INPUT (Conditional) -->
+          <div id="post-password-container" class="hidden bg-amber-50/80 p-3 rounded-xl border border-amber-200 space-y-1">
+            <label class="block text-xs font-bold text-amber-900">Password Post-Test <span class="text-rose-500">*</span></label>
+            <input type="password" id="input-post-password" placeholder="Masukkan password (smp)" class="w-full text-xs sm:text-sm px-3 py-1.5 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer / Actions (Always Sticky at Bottom) -->
+      <div class="bg-slate-50 px-5 py-3 flex justify-end gap-2.5 border-t border-slate-200 shrink-0">
+        <button type="button" onclick="closeRegistrationModal()" class="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-200 font-medium text-xs sm:text-sm transition">
+          Batal
+        </button>
+        <button type="button" onclick="proceedToQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-md transition flex items-center gap-2">
+          <span>Lanjut Pengerjaan</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PASSWORD MODAL FOR DASHBOARD (HALAMAN DUA) -->
+  <div id="modal-dashboard-auth" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center p-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100">
+      <div class="bg-slate-800 text-white px-6 py-4 flex items-center gap-2">
+        <i class="fa-solid fa-lock text-amber-400"></i>
+        <h3 class="font-bold text-base">Otentikasi Halaman Dua</h3>
+      </div>
+      <div class="p-6 space-y-4">
+        <p class="text-sm text-slate-600">Halaman rekapitulasi nilai dilindungi. Masukkan password untuk mengakses:</p>
+        <div>
+          <input type="password" id="input-dashboard-password" placeholder="Masukkan password..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+        </div>
+      </div>
+      <div class="bg-slate-50 px-6 py-3 flex justify-end gap-2 border-t border-slate-200">
+        <button onclick="closeDashboardAuthModal()" class="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-xl text-sm font-medium">Batal</button>
+        <button onclick="verifyDashboardPassword()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow">Buka Halaman</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOM ALERT / MESSAGE MODAL -->
+  <div id="modal-alert" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center p-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center border border-slate-100">
+      <div id="alert-icon" class="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 text-xl bg-amber-100 text-amber-600">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h4 id="alert-title" class="font-bold text-slate-800 text-lg mb-1">Pemberitahuan</h4>
+      <p id="alert-message" class="text-sm text-slate-600 mb-5">Pesan informasi di sini.</p>
+      <div id="alert-actions" class="flex gap-2">
+        <button onclick="closeAlertModal()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2.5 rounded-xl text-sm shadow transition">
+          Mengerti
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT APP LOGIC -->
+  <script>
+    // -------------------------------------------------------------
+    // INTEGRASI GOOGLE SHEETS / APPS SCRIPT
+    // -------------------------------------------------------------
+    // TEMPELKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI BAWAH INI:
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzfw2VGHTAkCY2UiLfRTz79ITv9-lZDJcKDuElLNpLBlng91xT7yRrhRQj9GzYcqbhn/exec";
+
+    // -------------------------------------------------------------
+    const SCHOOL_LIST = [
+      "SMP NEGERI 1 HALMAHERA UTARA",
+      "SMP NEGERI 2 HALMAHERA UTARA",
+      "SMP NEGERI 3 HALMAHERA UTARA",
+      "SMP NEGERI 4 HALMAHERA UTARA",
+      "SMP NEGERI 5 HALMAHERA UTARA",
+      "SMP NEGERI 6 HALMAHERA UTARA",
+      "SMP NEGERI 7 HALMAHERA UTARA",
+      "SMP NEGERI 8 HALMAHERA UTARA",
+      "SMP NEGERI 9 HALMAHERA UTARA",
+      "SMP NEGERI 10 HALMAHERA UTARA",
+      "SMP NEGERI 11 HALMAHERA UTARA",
+      "SMP NEGERI 12 HALMAHERA UTARA",
+      "SMP NEGERI 13 HALMAHERA UTARA",
+      "SMP NEGERI 14 HALMAHERA UTARA",
+      "SMP NEGERI 15 HALMAHERA UTARA",
+      "SMP NEGERI 16 HALMAHERA UTARA",
+      "SMP NEGERI 17 HALMAHERA UTARA",
+      "SMP NEGERI 18 HALMAHERA UTARA",
+      "SMP NEGERI 19 HALMAHERA UTARA",
+      "SMP NEGERI 20 HALMAHERA UTARA",
+      "SMP NEGERI 22 HALMAHERA UTARA",
+      "SMP NEGERI 23 HALMAHERA UTARA",
+      "SMP NEGERI 24 HALMAHERA UTARA",
+      "SMP NEGERI 25 HALMAHERA UTARA",
+      "SMP NEGERI 26 HALMAHERA UTARA",
+      "SMP NEGERI 27 HALMAHERA UTARA",
+      "SMP NEGERI 28 HALMAHERA UTARA",
+      "SMP NEGERI 29 HALMAHERA UTARA",
+      "SMP NEGERI 4 SATU ATAP TOLIWANG",
+      "SMP NEGERI 5 SATU ATAP LALONGA",
+      "SMP NEGERI 5 SATU ATAP TOLONUO",
+      "SMP NEGERI 6 SATU ATAP KAKARA",
+      "SMP NEGERI SATAP TOBO TOBO",
+      "SMP NEGERI SATU ATAP BOBALE",
+      "SMP NEGERI SATU ATAP BOBANEIGO",
+      "SMP NEGERI SATU ATAP CERA",
+      "SMP NEGERI SATU ATAP FITAKO",
+      "SMP NEGERI SATU ATAP KUSURI",
+      "SMP NEGERI SATU ATAP METI",
+      "SMP NEGERI SATU ATAP NGOALI",
+      "SMP NEGERI SATU ATAP TOBOULAMO",
+      "SMP ADVENT BORI",
+      "SMP ADVENT TOBELO",
+      "SMP AL BASYIRIAH GALAO",
+      "SMP AL BASYIRIAH TATE",
+      "SMP ALEGAN TOBELO",
+      "SMP ALIMAN GALAO GISI",
+      "SMP ALKHAIRAAT TOBELO",
+      "SMP BINA KARYA TOBELO",
+      "SMP BINA TALENTA DOWONGGILA",
+      "SMP BINA TALENTA ROKO",
+      "SMP BINTANG LAUT TOBELO",
+      "SMP BPD NGEBA PASIR PUTIH",
+      "SMP CINTA DAMAI",
+      "SMP GLOBAL PASIFIC",
+      "SMP GOTONG ROYONG TOBELO",
+      "SMP HAWA DJURUMUDI HARUM",
+      "SMP HEIN NAMOTEMO",
+      "SMP ISLAM DAGASULI",
+      "SMP ISLAM TERPADU ALKHAIRAAT LUARI",
+      "SMP ISLAM TOBELO",
+      "SMP KRISTEN DORUME",
+      "SMP KRISTEN GALELA",
+      "SMP KRISTEN GEORGE RORIWO",
+      "SMP KRISTEN PEDIWANG",
+      "SMP KRISTEN SOAMAETEK",
+      "SMP KRISTEN TOBELO",
+      "SMP MANGGALA PERKASA",
+      "SMP MAREN TOBELO",
+      "SMP MUH. WARINGIN LAMO",
+      "SMP MUHAMMADIYAH GALELA",
+      "SMP MUHAMMADYAH TOBELO",
+      "SMP NASIONAL GALELA SELATAN",
+      "SMP NUSANTARA TOBELO",
+      "SMP RAHAI",
+      "SMP TUNAS BANGSA HORIMOI",
+      "SMPS LABORATORIUM UNIERA"
+    ];
+
+    // -------------------------------------------------------------
+    // DATA QUESTIONS & KEYS (10 Poin Tiap Soal)
+    // -------------------------------------------------------------
+    const QUESTIONS_DATA = [
+      {
+        id: 1,
+        question: "Pak Danu, seorang guru IPA SMP, meminta murid-muridnya bekerja secara berkelompok untuk merancang alat penyaring air sederhana berbasis bahan daur ulang guna mengatasi krisis air bersih di sekitar sekolah. Setiap kelompok harus membagi tugas secara adil, menyusun strategi uji coba, serta berani mengambil risiko jika desain awal mereka gagal. Dimensi Profil Lulusan utama yang ditunjukkan oleh murid-murid dalam kasus ini adalah...",
+        options: {
+          A: "Kewargaan dan Komunikasi",
+          B: "Kolaborasi dan Kreativitas",
+          C: "Kemandirian dan Kesehatan",
+          D: "Penalaran Kritis dan Keimanan"
+        },
+        key: "B"
+      },
+      {
+        id: 2,
+        question: "Saat membuka pelajaran IPS kelas VIII, Bu Nina menayangkan video penumpukan sampah plastik di lingkungan sekitar sekolah. Beliau lalu mengajak siswa menganalisis dampaknya terhadap kehidupan warga setempat serta meminta mereka menyusun rencana tindakan nyata. Antusiasme siswa meningkat karena merasa materi yang dipelajari sangat relevan dengan realita mereka. Prinsip pembelajaran mendalam yang dominan diterapkan oleh Bu Nina adalah...",
+        options: {
+          A: "Berkesadaran",
+          B: "Bermakna",
+          C: "Menggembirakan",
+          D: "Berkelanjutan"
+        },
+        key: "B"
+      },
+      {
+        id: 3,
+        question: "Dalam pembelajaran Matematika materi Persamaan Linear, Pak Rian memfasilitasi siswa untuk tidak sekadar menghitung variabel x dan y. Beliau meminta siswa menerapkan rumus tersebut untuk merencanakan anggaran kas kelas dan menghitung titik impas (break-even point) penjualan produk bazar sekolah. Pengalaman belajar yang dialami peserta didik berada pada tahap...",
+        options: {
+          A: "Memahami",
+          B: "Mengaplikasi",
+          C: "Merefleksi",
+          D: "Metakognisi"
+        },
+        key: "B"
+      },
+      {
+        id: 4,
+        question: "Untuk topik keanekaragaman hayati, Bu Rina (Guru IPA SMP) berkolaborasi dengan Komunitas Peduli Lingkungan lokal. Beliau memandu murid berdiskusi secara fleksibel di laboratorium outdoor sekolah serta memanfaatkan platform LMS daring untuk tempat pengumpulan portofolio dan asesmen mandiri. Kerangka pembelajaran yang sedang diintegrasikan oleh Bu Rina meliputi...",
+        options: {
+          A: "Praktik Pedagogis dan Lingkungan Pembelajaran saja",
+          B: "Kemitraan Pembelajaran dan Lingkungan Pembelajaran saja",
+          C: "Kemitraan Pembelajaran, Lingkungan Pembelajaran, dan Pemanfaatan Digital",
+          D: "Praktik Pedagogis, Lingkungan Pembelajaran, dan Pemanfaatan Digital"
+        },
+        key: "C"
+      },
+      {
+        id: 5,
+        question: "Bu Maya, seorang guru Bahasa Indonesia SMP, sedang merancang unit pembelajaran tentang berita bohong (hoax). Agar siswa tidak hanya berhenti pada tahap surface learning (mengetahui definisi hoax dan membaca nyaring), beliau memfasilitasi pengalaman deep learning melalui spektrum kecakapan literasi level evaluasi dan refleksi. Langkah pembelajaran mana yang paling tepat dilakukan oleh Bu Maya?",
+        options: {
+          A: "Meminta siswa merangkum pengertian berita bohong dari buku teks lalu menghafalkannya.",
+          B: "Menugaskan siswa membaca teks berita tepercaya secara bergiliran di depan kelas.",
+          C: "Meminta siswa membandingkan dua artikel berita dari sumber berbeda, menguji keakuratan fakta serta bias penulisnya, lalu membuat simpulan kritikal.",
+          D: "Memberikan soal latihan pilihan ganda berisi pertanyaan faktual (C1–C2) tentang unsur 5W+1H dari teks berita."
+        },
+        key: "C"
+      },
+      {
+        id: 6,
+        question: "Pak Ari mengajar IPA materi Pencemaran Lingkungan. Beliau ingin menguatkan kecakapan numerasi siswa SMP tidak sekadar sebagai latihan berhitung rutin (rumus matematis murni), melainkan sebagai alat bantu mengambil keputusan nyata. Bentuk aktivitas pembelajaran yang paling sesuai dengan tujuan Pak Ari adalah...",
+        options: {
+          A: "Menugaskan siswa menghafal rumus kelajuan aliran air dan melakukan latihan soal numerik di papan tulis.",
+          B: "Meminta siswa mengumpulkan data konsumsi dan limbah botol plastik harian di sekolah, mengolahnya dalam bentuk grafik, serta mengusulkan strategi pengurangan sampah berdasarkan tren data.",
+          C: "Meminta siswa menggambar diagram ekosistem sungai pada kertas karton secara berkelompok.",
+          D: "Memberi tugas merangkum bab pencemaran lingkungan dan menjawab pertanyaan di akhir bab."
+        },
+        key: "B"
+      },
+      {
+        id: 7,
+        question: "<b>(TKA Literasi - Siswa SMP Kelas 3)</b><br>Bacalah teks berikut!<br><i>'Banyak toko swalayan mulai menghentikan penggunaan kantong plastik sekali pakai dan menggantinya dengan kantong belanja berbahan kain daur ulang. Pihak pengelola mengklaim bahwa kebijakan ini berhasil mengurangi sampah plastik hingga 60% di lingkungan toko dalam 6 bulan terakhir. Namun, sebuah laporan independen menunjukkan bahwa produksi satu kantong kain menggunakan air dan energi 100 kali lebih banyak dibandingkan pembuatan kantong plastik biasa. Oleh karena itu, jika kantong kain hanya dipakai 2–3 kali lalu dibuang, dampak kerusakan lingkungannya justru lebih besar daripada kantong plastik.'</i><br><br>Berdasarkan teks di atas, kesimpulan yang paling objektif dan didukung oleh bukti teks adalah...",
+        options: {
+          A: "Penggunaan kantong plastik sekali pakai jauh lebih ramah lingkungan daripada kantong kain dalam semua kondisi.",
+          B: "Kantong kain baru menjadi solusi ramah lingkungan jika digunakan secara berulang-ulang dalam jangka waktu lama.",
+          C: "Kebijakan larangan kantong plastik di toko swalayan sepenuhnya gagal mengurangi pencemaran.",
+          D: "Konsumen sebaiknya tidak lagi berbelanja di toko swalayan yang melarang kantong plastik."
+        },
+        key: "B"
+      },
+      {
+        id: 8,
+        question: "<b>(TKA Numerasi - Siswa SMP Kelas 3)</b><br>SMP Perdana mengadakan program hemat listrik. Berdasarkan data penggunaan AC di 10 ruang kelas IX selama 1 bulan (20 hari sekolah):<br>- Total konsumsi listrik AC saat suhu diatur 18°C: 1.200 kWh.<br>- Total konsumsi listrik AC saat suhu diatur 24°C: 840 kWh.<br>- Tarif listrik sekolah: Rp1.500,- per kWh.<br><br>Pengurus OSIS merekomendasikan agar seluruh kelas IX menyetel suhu AC pada 24°C. Berapa besar penghematan biaya listrik total yang diperoleh sekolah dalam kurun waktu 1 bulan tersebut?",
+        options: {
+          A: "Rp360.000,-",
+          B: "Rp540.000,-",
+          C: "Rp1.260.000,-",
+          D: "Rp1.800.000,-"
+        },
+        key: "B"
+      },
+      {
+        id: 9,
+        question: "Pak Bagus, guru IPA SMP, mengajarkan materi Sistem Pencernaan Manusia. Untuk memberikan pengalaman belajar yang interaktif dan mendalam, beliau mengombinasikan video edukasi animasi 3D dengan platform simulasi interaktif agar siswa dapat mengamati proses pencernaan secara visual. Setelah itu, siswa diminta bekerja secara kolaboratif dalam kelompok untuk memecahkan studi kasus gangguan pencernaan menggunakan papan virtual (kolaborasi daring).<br><br>Berdasarkan Kerangka Pembelajaran Mendalam, pemanfaatan teknologi digital yang dilakukan Pak Bagus berada pada tahap...",
+        options: {
+          A: "Perencanaan Pembelajaran",
+          B: "Pelaksanaan Pembelajaran",
+          C: "Asesmen Pembelajaran",
+          D: "Evaluasi Kurikulum"
+        },
+        key: "B"
+      },
+      {
+        id: 10,
+        question: "Bu Citra, guru Bahasa Indonesia SMP, menugaskan murid-muridnya membuat proyek karya tulis ilmiah populer berbasis masalah sosial di sekitar sekolah. Di akhir proses pembelajaran, Bu Citra memanfaatkan teknologi digital dengan meminta siswa mengunggah draf karya mereka ke platform portofolio digital yang terintegrasi dengan alat pemeriksa orisinalitas (ujicoba plagiarism checker) serta fitur umpan balik sejawat (peer feedback).<br><br>Fungsi utama pemanfaatan media digital yang diterapkan oleh Bu Citra dalam kasus tersebut adalah...",
+        options: {
+          A: "Merancang bahan ajar visual untuk persiapan awal kelas",
+          B: "Menyelenggarakan pembelajaran sinkronus dan simulasi berbasis AI",
+          C: "Memfasilitasi asesmen pembelajaran melalui portofolio digital dan evaluasi orisinalitas tulisan",
+          D: "Mengelola manajemen waktu dan kehadiran siswa secara otomatis"
+        },
+        key: "C"
+      }
+    ];
+
+    // -------------------------------------------------------------
+    // IN-MEMORY APP STATE
+    // -------------------------------------------------------------
+    let participantsData = [];
+    let currentParticipant = null; // { name, school, testType }
+
+    // -------------------------------------------------------------
+    // INITIALIZATION & EVENT LISTENERS
+    // -------------------------------------------------------------
+    window.onload = function() {
+      populateSchoolDropdown(SCHOOL_LIST);
+      renderQuizQuestions();
+      fetchCloudData(); // Memuat data awal dari Google Sheets saat aplikasi dibuka
+
+      // Close dropdowns when clicking outside
+      document.addEventListener('click', function(e) {
+        const schoolInput = document.getElementById('input-school-search');
+        const schoolDropdown = document.getElementById('school-dropdown');
+        if (schoolInput && schoolDropdown && !schoolInput.contains(e.target) && !schoolDropdown.contains(e.target)) {
+          schoolDropdown.classList.add('hidden');
+        }
+
+        const regNameInput = document.getElementById('registered-name-search');
+        const regNameDropdown = document.getElementById('registered-names-dropdown');
+        if (regNameInput && regNameDropdown && !regNameInput.contains(e.target) && !regNameDropdown.contains(e.target)) {
+          regNameDropdown.classList.add('hidden');
+        }
+      });
+    };
+
+    // Ambil data peserta secara real-time dari Google Sheets
+    async function fetchCloudData() {
+      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("AKfycbxXXXXXXXXXXXXXXXX")) return;
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000); // 4 detik timeout fallback
+        
+        const res = await fetch(GOOGLE_SCRIPT_URL, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        
+        const json = await res.json();
+        if (json.status === "success" && Array.isArray(json.data)) {
+          participantsData = json.data;
+        }
+      } catch (err) {
+        console.warn("Gagal mengambil data dari Google Sheets / Timeout, menggunakan data lokal:", err);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // POP-UP MODAL LOGIC
+    // -------------------------------------------------------------
+    function openRegistrationModal() {
+      fetchCloudData(); // Memastikan nama peserta terbaru ditarik sebelum membuka pop-up
+      document.getElementById('modal-registration').classList.remove('hidden');
+      toggleTestTypeMode(document.querySelector('input[name="testType"]:checked').value);
+    }
+
+    function closeRegistrationModal() {
+      document.getElementById('modal-registration').classList.add('hidden');
+    }
+
+    function toggleTestTypeMode(type) {
+      const postSearchBox = document.getElementById('post-test-search-container');
+      const postPasswordBox = document.getElementById('post-password-container');
+
+      if (type === 'post') {
+        postSearchBox.classList.remove('hidden');
+        postPasswordBox.classList.remove('hidden');
+        populateRegisteredNamesDropdown();
+      } else {
+        postSearchBox.classList.add('hidden');
+        postPasswordBox.classList.add('hidden');
+      }
+    }
+
+    function populateSchoolDropdown(schools) {
+      const dropdown = document.getElementById('school-dropdown');
+      dropdown.innerHTML = '';
+      if (schools.length === 0) {
+        dropdown.innerHTML = '<div class="p-3 text-xs text-slate-400 text-center">Sekolah tidak ditemukan</div>';
+        return;
+      }
+      schools.forEach(sch => {
+        const item = document.createElement('div');
+        item.className = 'px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 cursor-pointer transition';
+        item.innerText = sch;
+        item.onclick = function() {
+          document.getElementById('input-school-search').value = sch;
+          dropdown.classList.add('hidden');
+        };
+        dropdown.appendChild(item);
+      });
+    }
+
+    function filterSchoolOptions() {
+      const query = document.getElementById('input-school-search').value.toUpperCase();
+      const filtered = SCHOOL_LIST.filter(sch => sch.toUpperCase().includes(query));
+      populateSchoolDropdown(filtered);
+      showSchoolDropdown();
+    }
+
+    function showSchoolDropdown() {
+      document.getElementById('school-dropdown').classList.remove('hidden');
+    }
+
+    // Registered Participants Logic for Post-Test Quick Search
+    function populateRegisteredNamesDropdown(filterText = '') {
+      const dropdown = document.getElementById('registered-names-dropdown');
+      dropdown.innerHTML = '';
+
+      const query = filterText.toUpperCase();
+      const filtered = participantsData.filter(p => p.name.toUpperCase().includes(query));
+
+      if (filtered.length === 0) {
+        dropdown.innerHTML = '<div class="p-2.5 text-xs text-slate-400 text-center">Belum ada peserta Pre-Test terdaftar</div>';
+      } else {
+        filtered.forEach(p => {
+          const item = document.createElement('div');
+          item.className = 'px-3 py-2 text-xs font-bold text-slate-700 hover:bg-indigo-100 cursor-pointer border-b border-slate-100 flex justify-between items-center';
+          item.innerHTML = `<span>${p.name}</span> <span class="text-[10px] text-indigo-600 font-normal">${p.school}</span>`;
+          item.onclick = function() {
+            document.getElementById('input-participant-name').value = p.name;
+            document.getElementById('input-school-search').value = p.school;
+            document.getElementById('registered-name-search').value = p.name;
+            dropdown.classList.add('hidden');
+          };
+          dropdown.appendChild(item);
+        });
+      }
+      dropdown.classList.remove('hidden');
+    }
+
+    function filterRegisteredNames() {
+      const text = document.getElementById('registered-name-search').value;
+      populateRegisteredNamesDropdown(text);
+    }
+
+    // -------------------------------------------------------------
+    // VALIDATION & PROCEED TO QUIZ
+    // -------------------------------------------------------------
+    function proceedToQuiz() {
+      const testType = document.querySelector('input[name="testType"]:checked').value;
+      const name = document.getElementById('input-participant-name').value.trim().toUpperCase();
+      const school = document.getElementById('input-school-search').value.trim().toUpperCase();
+      const postPassword = document.getElementById('input-post-password').value;
+
+      if (!name) {
+        showAlert('Mohon Isi Nama', 'Nama peserta wajib diisi dengan huruf kapital.');
+        return;
+      }
+
+      if (!school) {
+        showAlert('Mohon Pilih Sekolah', 'Asal sekolah wajib diisi / dipilih dari daftar.');
+        return;
+      }
+
+      // Check Password if Post-Test
+      if (typeIsPost(testType)) {
+        if (postPassword !== 'smp') {
+          showAlert('Password Salah', 'Password khusus Post-Test adalah "smp". Silakan coba lagi.');
+          return;
+        }
+      }
+
+      // Save Current Participant Info
+      currentParticipant = {
+        name: name,
+        school: school,
+        testType: testType
+      };
+
+      // Set up UI badge and text
+      document.getElementById('quiz-participant-name').innerText = name;
+      document.getElementById('quiz-participant-school').innerHTML = `<i class="fa-solid fa-school mr-1"></i> ${school}`;
+      
+      const badge = document.getElementById('quiz-type-badge');
+      if (testType === 'pre') {
+        badge.innerText = 'Pree-Tes';
+        badge.className = 'inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-100 text-indigo-700 mb-1';
+      } else {
+        badge.innerText = 'Post-Tes';
+        badge.className = 'inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700 mb-1';
+      }
+
+      // Hide Modals & Welcome, Show Quiz
+      closeRegistrationModal();
+      document.getElementById('section-welcome').classList.add('hidden');
+      document.getElementById('section-dashboard').classList.add('hidden');
+      document.getElementById('section-quiz').classList.remove('hidden');
+
+      // Reset Form Inputs inside Quiz
+      document.getElementById('form-quiz').reset();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function typeIsPost(type) {
+      return type === 'post';
+    }
+
+    // -------------------------------------------------------------
+    // QUIZ RENDER & SUBMISSION
+    // -------------------------------------------------------------
+    function renderQuizQuestions() {
+      const container = document.getElementById('quiz-questions-container');
+      container.innerHTML = '';
+
+      QUESTIONS_DATA.forEach((q, index) => {
+        const qNum = index + 1;
+        const qCard = document.createElement('div');
+        qCard.className = 'p-5 md:p-6 bg-slate-50/70 rounded-2xl border border-slate-200 space-y-4';
+
+        let optionsHtml = '';
+        for (const [optKey, optVal] of Object.entries(q.options)) {
+          optionsHtml += `
+            <label class="flex items-start space-x-3 p-3 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/30 transition has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50">
+              <input type="radio" name="q_${q.id}" value="${optKey}" required class="mt-1 accent-indigo-600 w-4 h-4 flex-shrink-0">
+              <div class="text-sm text-slate-700 leading-relaxed">
+                <span class="font-bold text-slate-900 mr-1">${optKey}.</span> ${optVal}
+              </div>
+            </label>
+          `;
+        }
+
+        qCard.innerHTML = `
+          <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+            <span class="font-bold text-indigo-700 text-sm bg-indigo-100 px-3 py-1 rounded-lg">Soal #${qNum}</span>
+            <span class="text-xs font-semibold text-slate-400">Poin: 10</span>
+          </div>
+          <div class="text-slate-800 font-medium text-sm md:text-base leading-relaxed">
+            ${q.question}
+          </div>
+          <div class="space-y-2 pt-2">
+            ${optionsHtml}
+          </div>
+        `;
+
+        container.appendChild(qCard);
+      });
+    }
+
+    function submitQuiz(event) {
+      event.preventDefault();
+      
+      let totalScore = 0;
+      QUESTIONS_DATA.forEach(q => {
+        const selected = document.querySelector(`input[name="q_${q.id}"]:checked`);
+        if (selected && selected.value === q.key) {
+          totalScore += 10;
+        }
+      });
+
+      // Simpan skor ke memori & kirimkan ke Google Sheets Database
+      saveParticipantResult(currentParticipant.name, currentParticipant.school, currentParticipant.testType, totalScore);
+
+      // Tampilkan notifikasi berhasil
+      showAlert(
+        'Tes Selesai!',
+        `Selamat <b>${currentParticipant.name}</b>, Anda telah menyelesaikan ${currentParticipant.testType === 'pre' ? 'Pree-Tes' : 'Post-Tes'}. Total Nilai Anda: <b>${totalScore} / 100</b>.<br><span class="text-xs text-emerald-600 mt-2 block"><i class="fa-solid fa-cloud-arrow-up mr-1"></i> Data nilai berhasil tersimpan secara online.</span>`
+      );
+
+      // Sembunyikan formulir soal dan kembali ke halaman utama
+      document.getElementById('section-quiz').classList.add('hidden');
+      document.getElementById('section-welcome').classList.remove('hidden');
+    }
+
+    // -------------------------------------------------------------
+    // DATA MANAGEMENT & STATE RECORDING (WITH GOOGLE SHEETS SYNC)
+    // -------------------------------------------------------------
+    function saveParticipantResult(name, school, testType, score) {
+      let existing = participantsData.find(p => p.name.toUpperCase() === name.toUpperCase());
+
+      if (!existing) {
+        existing = {
+          name: name,
+          school: school,
+          preScore: null,
+          postScore: null
+        };
+        participantsData.push(existing);
+      }
+
+      if (testType === 'pre') {
+        existing.preScore = score;
+      } else if (testType === 'post') {
+        existing.postScore = score;
+      }
+
+      // Sinkronkan ke Google Sheets di background
+      if (GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes("AKfycbxXXXXXXXXXXXXX")) {
+        fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "SAVE_TEST",
+            name: name,
+            school: school,
+            testType: testType,
+            score: score
+          })
+        }).catch(err => console.error("Error sinkronisasi ke cloud:", err));
+      }
+    }
+
+    // -------------------------------------------------------------
+    // DASHBOARD / HALAMAN DUA LOGIC & PASSWORD
+    // -------------------------------------------------------------
+    function askDashboardPassword() {
+      document.getElementById('input-dashboard-password').value = '';
+      document.getElementById('modal-dashboard-auth').classList.remove('hidden');
+      document.getElementById('input-dashboard-password').focus();
+    }
+
+    function closeDashboardAuthModal() {
+      document.getElementById('modal-dashboard-auth').classList.add('hidden');
+    }
+
+    async function verifyDashboardPassword() {
+      const pass = document.getElementById('input-dashboard-password').value;
+      if (pass === 'halut') {
+        closeDashboardAuthModal();
+        
+        // Coba ambil data cloud dengan batas waktu timeout
+        try {
+          await fetchCloudData();
+        } catch (e) {
+          console.warn("Menggunakan data lokal karena fetch cloud timeout/gagal:", e);
+        }
+
+        renderDashboard();
+        document.getElementById('section-welcome').classList.add('hidden');
+        document.getElementById('section-quiz').classList.add('hidden');
+        document.getElementById('section-dashboard').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        showAlert('Akses Ditolak', 'Password Halaman Dua salah! Password yang benar adalah <b>"halut"</b>.');
+      }
+    }
+
+    function closeDashboard() {
+      document.getElementById('section-dashboard').classList.add('hidden');
+      document.getElementById('section-welcome').classList.remove('hidden');
+    }
+
+    function renderDashboard() {
+      const tbody = document.getElementById('table-results-body');
+      tbody.innerHTML = '';
+
+      if (participantsData.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="p-6 text-center text-slate-400">
+              Belum ada data nilai peserta yang terekam.
+            </td>
+          </tr>
+        `;
+        document.getElementById('stat-total-students').innerText = '0';
+        document.getElementById('stat-avg-pre').innerText = '0';
+        document.getElementById('stat-avg-post').innerText = '0';
+        return;
+      }
+
+      let totalPre = 0, countPre = 0;
+      let totalPost = 0, countPost = 0;
+
+      participantsData.forEach((p, index) => {
+        const preVal = p.preScore !== null ? p.preScore : '-';
+        const postVal = p.postScore !== null ? p.postScore : '-';
+        
+        let deltaHtml = '-';
+        if (p.preScore !== null && p.postScore !== null) {
+          const delta = p.postScore - p.preScore;
+          if (delta > 0) {
+            deltaHtml = `<span class="font-bold text-emerald-600">+${delta}</span>`;
+          } else if (delta < 0) {
+            deltaHtml = `<span class="font-bold text-rose-600">${delta}</span>`;
+          } else {
+            deltaHtml = `<span class="font-bold text-slate-500">0</span>`;
+          }
+        }
+
+        if (p.preScore !== null) { totalPre += p.preScore; countPre++; }
+        if (p.postScore !== null) { totalPost += p.postScore; countPost++; }
+
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-slate-50/80 transition';
+        row.innerHTML = `
+          <td class="p-3 text-slate-400 font-mono text-xs">${index + 1}</td>
+          <td class="p-3 font-bold text-slate-800">${p.name}</td>
+          <td class="p-3 text-xs text-slate-600">${p.school}</td>
+          <td class="p-3 text-center font-semibold text-indigo-600">${preVal}</td>
+          <td class="p-3 text-center font-semibold text-emerald-600">${postVal}</td>
+          <td class="p-3 text-center">${deltaHtml}</td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      // Stats Update
+      document.getElementById('stat-total-students').innerText = participantsData.length;
+      document.getElementById('stat-avg-pre').innerText = countPre > 0 ? (totalPre / countPre).toFixed(1) : '0';
+      document.getElementById('stat-avg-post').innerText = countPost > 0 ? (totalPost / countPost).toFixed(1) : '0';
+    }
+
+    // -------------------------------------------------------------
+    // EXPORT TO EXCEL FEATURE
+    // -------------------------------------------------------------
+    function exportToExcel() {
+      if (participantsData.length === 0) {
+        showAlert('Data Kosong', 'Tidak ada data peserta untuk diunduh.');
+        return;
+      }
+
+      const excelData = participantsData.map((p, idx) => ({
+        "No": idx + 1,
+        "Nama Peserta": p.name,
+        "Asal Sekolah": p.school,
+        "Nilai Pre-Test": p.preScore !== null ? p.preScore : "-",
+        "Nilai Post-Test": p.postScore !== null ? p.postScore : "-",
+        "Selisih (Post - Pre)": (p.preScore !== null && p.postScore !== null) ? (p.postScore - p.preScore) : "-"
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(excelData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Hasil Evaluasi");
+
+      // Auto-fit width kolom
+      const max_width = excelData.reduce((w, r) => Math.max(w, r["Nama Peserta"].length), 10);
+      worksheet["!cols"] = [
+        { wch: 5 },  // No
+        { wch: Math.max(max_width, 20) }, // Nama
+        { wch: 35 }, // Sekolah
+        { wch: 15 }, // Pre
+        { wch: 15 }, // Post
+        { wch: 20 }  // Selisih
+      ];
+
+      XLSX.writeFile(workbook, `Rekap_Nilai_Tes_Halut_${new Date().toISOString().slice(0,10)}.xlsx`);
+    }
+
+    // -------------------------------------------------------------
+    // RESET DATA FEATURE (WITH GOOGLE SHEETS SYNC)
+    // -------------------------------------------------------------
+    function confirmResetData() {
+      if (participantsData.length === 0) {
+        showAlert('Data Kosong', 'Tidak ada data nilai yang tersimpan untuk di-reset.');
+        return;
+      }
+
+      showConfirm(
+        'Reset Seluruh Data?',
+        'Apakah Anda yakin ingin menghapus semua rekap nilai peserta? Data yang tersimpan di Google Sheets juga akan di-reset.',
+        function() {
+          participantsData = [];
+          renderDashboard();
+
+          // Reset data pada Google Sheets
+          if (GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes("AKfycbxXXXXXXXXXXXXX")) {
+            fetch(GOOGLE_SCRIPT_URL, {
+              method: "POST",
+              mode: "no-cors",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ action: "RESET" })
+            }).catch(err => console.error("Error reset data di cloud:", err));
+          }
+
+          showAlert('Berhasil', 'Seluruh data nilai peserta berhasil di-reset.');
+        }
+      );
+    }
+
+    // -------------------------------------------------------------
+    // CUSTOM ALERT & CONFIRM MODAL
+    // -------------------------------------------------------------
+    function showAlert(title, message) {
+      document.getElementById('alert-title').innerText = title;
+      document.getElementById('alert-message').innerHTML = message;
+      document.getElementById('alert-icon').className = 'w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 text-xl bg-amber-100 text-amber-600';
+      document.getElementById('alert-icon').innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+      
+      const actions = document.getElementById('alert-actions');
+      actions.innerHTML = `
+        <button onclick="closeAlertModal()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2.5 rounded-xl text-sm shadow transition">
+          Mengerti
+        </button>
+      `;
+      document.getElementById('modal-alert').classList.remove('hidden');
+    }
+
+    function showConfirm(title, message, onConfirmCallback) {
+      document.getElementById('alert-title').innerText = title;
+      document.getElementById('alert-message').innerHTML = message;
+      document.getElementById('alert-icon').className = 'w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 text-xl bg-rose-100 text-rose-600';
+      document.getElementById('alert-icon').innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+
+      const actions = document.getElementById('alert-actions');
+      actions.innerHTML = `
+        <button onclick="closeAlertModal()" class="w-1/2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2.5 rounded-xl text-sm transition">
+          Batal
+        </button>
+        <button id="btn-confirm-action" class="w-1/2 bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 rounded-xl text-sm shadow transition">
+          Hapus Data
+        </button>
+      `;
+
+      document.getElementById('btn-confirm-action').onclick = function() {
+        closeAlertModal();
+        if (typeof onConfirmCallback === 'function') {
+          onConfirmCallback();
+        }
+      };
+
+      document.getElementById('modal-alert').classList.remove('hidden');
+    }
+
+    function closeAlertModal() {
+      document.getElementById('modal-alert').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
