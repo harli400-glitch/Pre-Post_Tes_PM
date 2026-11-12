@@ -257,7 +257,7 @@
           <!-- POST TEST PASSWORD INPUT (Conditional) -->
           <div id="post-password-container" class="hidden bg-amber-50/80 p-3 rounded-xl border border-amber-200 space-y-1">
             <label class="block text-xs font-bold text-amber-900">Password Post-Test <span class="text-rose-500">*</span></label>
-            <input type="password" id="input-post-password" placeholder="Masukkan password (smp)" class="w-full text-xs sm:text-sm px-3 py-1.5 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white">
+            <input type="password" id="input-post-password" placeholder="Masukkan password" class="w-full text-xs sm:text-sm px-3 py-1.5 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white">
           </div>
         </div>
 
@@ -765,7 +765,7 @@
       // Check Password if Post-Test
       if (typeIsPost(testType)) {
         if (postPassword !== 'smp') {
-          showAlert('Password Salah', 'Password khusus Post-Test adalah "smp". Silakan coba lagi.');
+          showAlert('Password Salah', 'Silakan coba lagi.');
           return;
         }
       }
@@ -982,7 +982,7 @@
 
     async function verifyDashboardPassword() {
       const pass = document.getElementById('input-dashboard-password').value;
-      if (pass === 'halut') {
+      if (pass === 'harli') {
         closeDashboardAuthModal();
         
         // Coba ambil data cloud dengan batas waktu timeout
@@ -998,7 +998,7 @@
         document.getElementById('section-dashboard').classList.remove('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        showAlert('Akses Ditolak', 'Password Halaman Dua salah! Password yang benar adalah <b>"halut"</b>.');
+        showAlert('Akses Ditolak', 'Password Halaman Dua salah!');
       }
     }
 
