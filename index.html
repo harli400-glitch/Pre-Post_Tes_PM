@@ -85,8 +85,8 @@
           <span id="quiz-type-badge" class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-100 text-indigo-700 mb-1">
             Pre-Test
           </span>
-          <h3 id="quiz-participant-name" class="font-bold text-lg text-slate-800">NAMA PESERTA</h3>
-          <p id="quiz-participant-school" class="text-xs text-slate-500"><i class="fa-solid fa-school mr-1"></i> ASAL SEKOLAH</p>
+          <h3 id="quiz-participant-name" class="font-bold text-lg text-slate-800">Nama Peserta</h3>
+          <p id="quiz-participant-school" class="text-xs text-slate-500"><i class="fa-solid fa-school mr-1"></i> Asal Sekolah</p>
         </div>
         <div class="bg-indigo-50 border border-indigo-100 px-4 py-2 rounded-xl text-center">
           <span class="text-xs text-slate-500 block">Total Soal</span>
@@ -226,7 +226,7 @@
             <i class="fa-solid fa-magnifying-glass text-indigo-600 mr-1"></i> Cari Nama Terdaftar (Post-Test):
           </label>
           <div class="relative">
-            <input type="text" id="registered-name-search" placeholder="Ketik nama untuk mencari..." onkeyup="filterRegisteredNames()" class="w-full text-xs sm:text-sm px-3 py-2 border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white uppercase">
+            <input type="text" id="registered-name-search" placeholder="Ketik nama untuk mencari..." onkeyup="filterRegisteredNames()" class="w-full text-xs sm:text-sm px-3 py-2 border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
             <div id="registered-names-dropdown" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-40 overflow-y-auto hidden z-40 custom-scrollbar">
               <!-- Registered names listed here -->
             </div>
@@ -234,17 +234,17 @@
           <span class="text-[11px] text-indigo-600 block leading-tight">*Pilih nama & sekolah Anda yang sudah diisi saat Pree-Tes</span>
         </div>
 
-        <!-- 2. Isian Nama Peserta (Wajib Kapital) & 3. Asal Sekolah & Password -->
+        <!-- 2. Isian Nama Peserta & 3. Asal Sekolah & Password -->
         <div class="space-y-4 pb-12">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Nama Peserta <span class="text-rose-500">*</span></label>
-            <input type="text" id="input-participant-name" oninput="this.value = this.value.toUpperCase()" placeholder="NAMA LENGKAP (KAPITAL)" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs sm:text-sm font-medium uppercase tracking-wide">
+            <input type="text" id="input-participant-name" placeholder="Masukkan nama lengkap" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs sm:text-sm font-medium">
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Asal Sekolah <span class="text-rose-500">*</span></label>
             <div class="relative">
-              <input type="text" id="input-school-search" placeholder="Ketik nama / nomor sekolah..." onkeyup="filterSchoolOptions()" onfocus="showSchoolDropdown()" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs sm:text-sm font-medium uppercase">
+              <input type="text" id="input-school-search" placeholder="Ketik nama / nomor sekolah..." onkeyup="filterSchoolOptions()" onfocus="showSchoolDropdown()" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs sm:text-sm font-medium">
               <i class="fa-solid fa-chevron-down absolute right-3 top-3 text-slate-400 text-xs pointer-events-none"></i>
               
               <!-- Dropdown options -->
@@ -568,9 +568,14 @@
       }
     }
 
-    // Helper: Normalisasi teks (nama atau sekolah) agar spasi ganda tidak lolos pengecekan duplikat
-    function normalizeText(text) {
-      return String(text || '').trim().replace(/\s+/g, ' ').toUpperCase();
+    // Helper: Rapikan spasi berlebih sambil mempertahankan kapitalisasi asli pengguna
+    function cleanText(text) {
+      return String(text || '').trim().replace(/\s+/g, ' ');
+    }
+
+    // Helper: Normalisasi teks untuk perbandingan case-insensitive (agar "Budi" & "BUDI" tetap terdeteksi sama)
+    function normalizeCompare(text) {
+      return cleanText(text).toUpperCase();
     }
 
     // Helper: Penyimpanan lokal untuk mencegah pengiriman berulang dari browser yang sama
@@ -582,10 +587,10 @@
       }
     }
 
-    function markLocalSubmission(normalizedName, normalizedSchool, testType) {
+    function markLocalSubmission(compareName, compareSchool, testType) {
       try {
         const records = getLocalSubmissions();
-        const key = `${normalizedName}|${normalizedSchool}|${testType}`;
+        const key = `${compareName}|${compareSchool}|${testType}`;
         records[key] = true;
         localStorage.setItem(LOCAL_SUBMISSION_KEY, JSON.stringify(records));
       } catch (e) {
@@ -593,20 +598,23 @@
       }
     }
 
-    function isLocallySubmitted(normalizedName, normalizedSchool, testType) {
+    function isLocallySubmitted(compareName, compareSchool, testType) {
       const records = getLocalSubmissions();
-      const key = `${normalizedName}|${normalizedSchool}|${testType}`;
+      const key = `${compareName}|${compareSchool}|${testType}`;
       return Boolean(records[key]);
     }
 
     // Helper: Cek apakah kombinasi (nama peserta + asal sekolah) sudah pernah mengirim jawaban untuk jenis tes tertentu
-    function hasAlreadySubmitted(normalizedName, normalizedSchool, testType) {
-      if (isLocallySubmitted(normalizedName, normalizedSchool, testType)) {
+    function hasAlreadySubmitted(rawName, rawSchool, testType) {
+      const compareName = normalizeCompare(rawName);
+      const compareSchool = normalizeCompare(rawSchool);
+
+      if (isLocallySubmitted(compareName, compareSchool, testType)) {
         return true;
       }
 
       const existing = participantsData.find(
-        p => normalizeText(p.name) === normalizedName && normalizeText(p.school) === normalizedSchool
+        p => normalizeCompare(p.name) === compareName && normalizeCompare(p.school) === compareSchool
       );
       if (!existing) return false;
 
@@ -680,19 +688,19 @@
       const dropdown = document.getElementById('registered-names-dropdown');
       dropdown.innerHTML = '';
 
-      const query = filterText.toUpperCase();
+      const query = normalizeCompare(filterText);
       const filtered = participantsData.filter(p => 
-        normalizeText(p.name).includes(query) || normalizeText(p.school).includes(query)
+        normalizeCompare(p.name).includes(query) || normalizeCompare(p.school).includes(query)
       );
 
       if (filtered.length === 0) {
         dropdown.innerHTML = '<div class="p-2.5 text-xs text-slate-400 text-center">Belum ada peserta Pre-Test terdaftar</div>';
       } else {
         filtered.forEach(p => {
-          const normName = normalizeText(p.name);
-          const normSchool = normalizeText(p.school);
+          const compName = normalizeCompare(p.name);
+          const compSchool = normalizeCompare(p.school);
           const alreadyDonePost = (p.postScore !== null && p.postScore !== undefined && p.postScore !== '') || 
-                                  isLocallySubmitted(normName, normSchool, 'post');
+                                  isLocallySubmitted(compName, compSchool, 'post');
           const item = document.createElement('div');
           item.className = `px-3 py-2 text-xs font-bold border-b border-slate-100 flex justify-between items-center ${
             alreadyDonePost 
@@ -740,24 +748,24 @@
     // -------------------------------------------------------------
     async function proceedToQuiz() {
       const testType = document.querySelector('input[name="testType"]:checked').value;
-      const name = normalizeText(document.getElementById('input-participant-name').value);
-      const school = normalizeText(document.getElementById('input-school-search').value);
+      const name = cleanText(document.getElementById('input-participant-name').value);
+      const schoolInput = cleanText(document.getElementById('input-school-search').value);
       const postPassword = document.getElementById('input-post-password').value;
       const btnProceed = document.getElementById('btn-proceed-quiz');
 
       if (!name) {
-        showAlert('Mohon Isi Nama', 'Nama peserta wajib diisi dengan huruf kapital.');
+        showAlert('Mohon Isi Nama', 'Nama peserta wajib diisi.');
         return;
       }
 
-      if (!school) {
+      if (!schoolInput) {
         showAlert('Mohon Pilih Sekolah', 'Asal sekolah wajib diisi / dipilih dari daftar.');
         return;
       }
 
-      // Pastikan asal sekolah dipilih sesuai daftar sekolah yang valid
-      const isValidSchool = SCHOOL_LIST.some(s => normalizeText(s) === school);
-      if (!isValidSchool) {
+      // Pastikan asal sekolah sesuai daftar sekolah yang valid (tidak peka huruf besar/kecil)
+      const matchedSchool = SCHOOL_LIST.find(s => normalizeCompare(s) === normalizeCompare(schoolInput));
+      if (!matchedSchool) {
         showAlert('Sekolah Tidak Valid', 'Silakan pilih asal sekolah yang tersedia dari daftar pilihan.');
         return;
       }
@@ -783,11 +791,11 @@
       }
 
       // Validasi kombinasi Nama Peserta + Asal Sekolah: hanya boleh mengirim 1 kali per jenis tes
-      if (hasAlreadySubmitted(name, school, testType)) {
+      if (hasAlreadySubmitted(name, matchedSchool, testType)) {
         const testLabel = testType === 'pre' ? 'Pree-Tes' : 'Post-Tes';
         showAlert(
           'Akses Ditolak (Sudah Mengisi)',
-          `Peserta <b>${name}</b> dari <b>${school}</b> sudah pernah mengirimkan jawaban <b>${testLabel}</b>.<br><br>Setiap peserta hanya diperbolehkan mengirim masing-masing jawaban satu kali.`
+          `Peserta <b>${name}</b> dari <b>${matchedSchool}</b> sudah pernah mengirimkan jawaban <b>${testLabel}</b>.<br><br>Setiap peserta hanya diperbolehkan mengirim masing-masing jawaban satu kali.`
         );
         return;
       }
@@ -795,13 +803,13 @@
       // Save Current Participant Info
       currentParticipant = {
         name: name,
-        school: school,
+        school: matchedSchool,
         testType: testType
       };
 
       // Set up UI badge and text
       document.getElementById('quiz-participant-name').innerText = name;
-      document.getElementById('quiz-participant-school').innerHTML = `<i class="fa-solid fa-school mr-1"></i> ${school}`;
+      document.getElementById('quiz-participant-school').innerHTML = `<i class="fa-solid fa-school mr-1"></i> ${matchedSchool}`;
       
       const badge = document.getElementById('quiz-type-badge');
       if (testType === 'pre') {
@@ -924,16 +932,19 @@
     // DATA MANAGEMENT & STATE RECORDING (WITH GOOGLE SHEETS SYNC)
     // -------------------------------------------------------------
     function saveParticipantResult(name, school, testType, score) {
-      const normalizedName = normalizeText(name);
-      const normalizedSchool = normalizeText(school);
+      const cleanedName = cleanText(name);
+      const cleanedSchool = cleanText(school);
+      const compareName = normalizeCompare(cleanedName);
+      const compareSchool = normalizeCompare(cleanedSchool);
+
       let existing = participantsData.find(
-        p => normalizeText(p.name) === normalizedName && normalizeText(p.school) === normalizedSchool
+        p => normalizeCompare(p.name) === compareName && normalizeCompare(p.school) === compareSchool
       );
 
       if (!existing) {
         existing = {
-          name: normalizedName,
-          school: normalizedSchool,
+          name: cleanedName,
+          school: cleanedSchool,
           preScore: null,
           postScore: null
         };
@@ -948,7 +959,7 @@
         existing.postScore = score;
       }
 
-      markLocalSubmission(normalizedName, normalizedSchool, testType);
+      markLocalSubmission(compareName, compareSchool, testType);
 
       // Sinkronkan ke Google Sheets di background
       if (GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes("AKfycbxXXXXXXXXXXXXX")) {
@@ -958,8 +969,8 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             action: "SAVE_TEST",
-            name: normalizedName,
-            school: normalizedSchool,
+            name: cleanedName,
+            school: cleanedSchool,
             testType: testType,
             score: score
           })
