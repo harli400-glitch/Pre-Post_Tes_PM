@@ -51,7 +51,7 @@
       <div class="flex items-center space-x-2">
         <button id="btn-open-dashboard" onclick="askDashboardPassword()" class="bg-indigo-600 hover:bg-indigo-800 text-white px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 border border-indigo-400">
           <i class="fa-solid fa-chart-line"></i>
-          <span class="hidden sm:inline">Halaman Dua (Nilai)</span>
+          <span class="hidden sm:inline">Nilai</span>
         </button>
       </div>
     </div>
@@ -113,7 +113,7 @@
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-slate-200">
         <div>
           <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
-            <i class="fa-solid fa-file-invoice text-indigo-600"></i> Halaman Dua: Hasil & Nilai Peserta
+            <i class="fa-solid fa-file-invoice text-indigo-600"></i> Nilai Peserta
           </h2>
           <p class="text-sm text-slate-500">Rekapitulasi otomatis perbandingan nilai Pre-Test dan Post-Test</p>
         </div>
@@ -282,7 +282,7 @@
     <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100">
       <div class="bg-slate-800 text-white px-6 py-4 flex items-center gap-2">
         <i class="fa-solid fa-lock text-amber-400"></i>
-        <h3 class="font-bold text-base">Otentikasi Halaman Dua</h3>
+        <h3 class="font-bold text-base">Otentikasi Halaman Nilai</h3>
       </div>
       <div class="p-6 space-y-4">
         <p class="text-sm text-slate-600">Halaman rekapitulasi nilai dilindungi. Masukkan password untuk mengakses:</p>
@@ -1009,7 +1009,7 @@
         document.getElementById('section-dashboard').classList.remove('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        showAlert('Akses Ditolak', 'Password Halaman Dua salah!');
+        showAlert('Akses Ditolak', 'Password salah!');
       }
     }
 
