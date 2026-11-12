@@ -67,10 +67,13 @@
       </div>
       <h2 class="text-2xl font-bold text-slate-800 mb-2">Selamat Datang di Portal Tes</h2>
       <p class="text-slate-600 max-w-md mx-auto mb-6 text-sm">
-        Silahkan klik tombol di bawah untuk mengisi data diri dan memulai pengerjaan Pre-Test atau Post-Test.
+       Bimbingan Teknis, Pelatihan Dan atau Magang untuk Peningkatan Kapasitas Bidang Pendidikan melalui Pembelajaran Mendalam.
+      </p>
+      <p class="text-slate-600 max-w-md mx-auto mb-6 text-sm">
+       Bidang SMP: 12–13 November 2026
       </p>
       <button onclick="openRegistrationModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-indigo-200 transition transform hover:-translate-y-0.5">
-        <i class="fa-solid fa-pen-to-square mr-2"></i> Isi Formulir Peserta
+        <i class="fa-solid fa-pen-to-square mr-2"></i> Mulai TES
       </button>
     </div>
 
@@ -98,7 +101,7 @@
         </div>
 
         <div class="pt-6 border-t border-slate-200 flex justify-end">
-          <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-emerald-200 transition flex items-center gap-2">
+          <button type="submit" id="btn-submit-quiz" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-emerald-200 transition flex items-center gap-2">
             <i class="fa-solid fa-paper-plane"></i> Kirim Jawaban Saya
           </button>
         </div>
@@ -115,9 +118,6 @@
           <p class="text-sm text-slate-500">Rekapitulasi otomatis perbandingan nilai Pre-Test dan Post-Test</p>
         </div>
         <div class="flex flex-wrap gap-2">
-          <button onclick="confirmResetData()" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-xl font-medium text-sm transition flex items-center gap-2 shadow">
-            <i class="fa-solid fa-trash-can"></i> Reset Data
-          </button>
           <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-medium text-sm transition flex items-center gap-2 shadow">
             <i class="fa-solid fa-file-excel"></i> Unduh Rekap (Excel)
           </button>
@@ -128,7 +128,7 @@
       </div>
 
       <!-- Summary Stats -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 my-6">
         <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl">
           <span class="text-xs text-indigo-600 font-semibold uppercase">Total Peserta Terdaftar</span>
           <p id="stat-total-students" class="text-2xl font-bold text-indigo-900 mt-1">0</p>
@@ -140,6 +140,27 @@
         <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
           <span class="text-xs text-emerald-600 font-semibold uppercase">Rata-Rata Post-Test</span>
           <p id="stat-avg-post" class="text-2xl font-bold text-emerald-900 mt-1">0</p>
+        </div>
+        <div class="bg-sky-50 border border-sky-100 p-4 rounded-xl">
+          <span class="text-xs text-sky-600 font-semibold uppercase">Rata-Rata Peningkatan</span>
+          <p id="stat-avg-increase" class="text-2xl font-bold text-sky-900 mt-1">0</p>
+        </div>
+      </div>
+
+      <!-- Sorting Controls (Dropdown) -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+        <label for="sort-select" class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-700">
+          <i class="fa-solid fa-arrow-down-wide-short text-indigo-600"></i>
+          <span>Urutkan Berdasarkan (Nilai Tertinggi):</span>
+        </label>
+        <div class="relative w-full sm:w-64">
+          <select id="sort-select" onchange="changeSort(this.value)" class="w-full appearance-none bg-white border border-slate-300 text-slate-700 text-xs sm:text-sm font-semibold rounded-xl px-3.5 py-2 pr-9 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer shadow-sm">
+            <option value="default">Default (Urutan Masuk)</option>
+            <option value="pre">Pree-Tes Tertinggi</option>
+            <option value="post">Post-Tes Tertinggi</option>
+            <option value="delta">Selisih Tertinggi</option>
+          </select>
+          <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
         </div>
       </div>
 
@@ -171,8 +192,8 @@
   </footer>
 
   <!-- POP-UP MODAL FORMULIR AWAL -->
-  <div id="modal-registration" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center p-3 sm:p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all border border-slate-100 flex flex-col max-h-[90vh]">
+  <div id="modal-registration" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center p-3 sm:p-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all border border-slate-100 flex flex-col h-[85vh] max-h-[95vh] min-h-[480px]">
       
       <!-- Modal Header -->
       <div class="bg-indigo-700 text-white px-5 py-3.5 flex justify-between items-center shrink-0">
@@ -206,15 +227,15 @@
           </label>
           <div class="relative">
             <input type="text" id="registered-name-search" placeholder="Ketik nama untuk mencari..." onkeyup="filterRegisteredNames()" class="w-full text-xs sm:text-sm px-3 py-2 border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white uppercase">
-            <div id="registered-names-dropdown" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-32 overflow-y-auto hidden z-20 custom-scrollbar">
+            <div id="registered-names-dropdown" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-40 overflow-y-auto hidden z-40 custom-scrollbar">
               <!-- Registered names listed here -->
             </div>
           </div>
-          <span class="text-[11px] text-indigo-600 block leading-tight">*Pilih nama Anda yang sudah diisi saat Pree-Tes</span>
+          <span class="text-[11px] text-indigo-600 block leading-tight">*Pilih nama & sekolah Anda yang sudah diisi saat Pree-Tes</span>
         </div>
 
         <!-- 2. Isian Nama Peserta (Wajib Kapital) & 3. Asal Sekolah & Password -->
-        <div class="space-y-3">
+        <div class="space-y-4 pb-12">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Nama Peserta <span class="text-rose-500">*</span></label>
             <input type="text" id="input-participant-name" oninput="this.value = this.value.toUpperCase()" placeholder="NAMA LENGKAP (KAPITAL)" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs sm:text-sm font-medium uppercase tracking-wide">
@@ -227,7 +248,7 @@
               <i class="fa-solid fa-chevron-down absolute right-3 top-3 text-slate-400 text-xs pointer-events-none"></i>
               
               <!-- Dropdown options -->
-              <div id="school-dropdown" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-40 overflow-y-auto hidden z-30 custom-scrollbar divide-y divide-slate-100">
+              <div id="school-dropdown" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-52 overflow-y-auto hidden z-50 custom-scrollbar divide-y divide-slate-100">
                 <!-- Schools will be inserted dynamically -->
               </div>
             </div>
@@ -247,7 +268,7 @@
         <button type="button" onclick="closeRegistrationModal()" class="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-200 font-medium text-xs sm:text-sm transition">
           Batal
         </button>
-        <button type="button" onclick="proceedToQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-md transition flex items-center gap-2">
+        <button type="button" id="btn-proceed-quiz" onclick="proceedToQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-md transition flex items-center gap-2">
           <span>Lanjut Pengerjaan</span>
           <i class="fa-solid fa-arrow-right"></i>
         </button>
@@ -297,7 +318,6 @@
     // -------------------------------------------------------------
     // INTEGRASI GOOGLE SHEETS / APPS SCRIPT
     // -------------------------------------------------------------
-    // TEMPELKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI BAWAH INI:
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzfw2VGHTAkCY2UiLfRTz79ITv9-lZDJcKDuElLNpLBlng91xT7yRrhRQj9GzYcqbhn/exec";
 
     // -------------------------------------------------------------
@@ -502,6 +522,8 @@
     // -------------------------------------------------------------
     let participantsData = [];
     let currentParticipant = null; // { name, school, testType }
+    let currentSortBy = 'default'; // 'default' | 'pre' | 'post' | 'delta'
+    const LOCAL_SUBMISSION_KEY = 'halut_eval_submitted_v1';
 
     // -------------------------------------------------------------
     // INITIALIZATION & EVENT LISTENERS
@@ -532,7 +554,7 @@
       if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("AKfycbxXXXXXXXXXXXXXXXX")) return;
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 4000); // 4 detik timeout fallback
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 detik timeout fallback
         
         const res = await fetch(GOOGLE_SCRIPT_URL, { signal: controller.signal });
         clearTimeout(timeoutId);
@@ -544,6 +566,56 @@
       } catch (err) {
         console.warn("Gagal mengambil data dari Google Sheets / Timeout, menggunakan data lokal:", err);
       }
+    }
+
+    // Helper: Normalisasi teks (nama atau sekolah) agar spasi ganda tidak lolos pengecekan duplikat
+    function normalizeText(text) {
+      return String(text || '').trim().replace(/\s+/g, ' ').toUpperCase();
+    }
+
+    // Helper: Penyimpanan lokal untuk mencegah pengiriman berulang dari browser yang sama
+    function getLocalSubmissions() {
+      try {
+        return JSON.parse(localStorage.getItem(LOCAL_SUBMISSION_KEY) || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function markLocalSubmission(normalizedName, normalizedSchool, testType) {
+      try {
+        const records = getLocalSubmissions();
+        const key = `${normalizedName}|${normalizedSchool}|${testType}`;
+        records[key] = true;
+        localStorage.setItem(LOCAL_SUBMISSION_KEY, JSON.stringify(records));
+      } catch (e) {
+        // Abaikan jika localStorage diblokir
+      }
+    }
+
+    function isLocallySubmitted(normalizedName, normalizedSchool, testType) {
+      const records = getLocalSubmissions();
+      const key = `${normalizedName}|${normalizedSchool}|${testType}`;
+      return Boolean(records[key]);
+    }
+
+    // Helper: Cek apakah kombinasi (nama peserta + asal sekolah) sudah pernah mengirim jawaban untuk jenis tes tertentu
+    function hasAlreadySubmitted(normalizedName, normalizedSchool, testType) {
+      if (isLocallySubmitted(normalizedName, normalizedSchool, testType)) {
+        return true;
+      }
+
+      const existing = participantsData.find(
+        p => normalizeText(p.name) === normalizedName && normalizeText(p.school) === normalizedSchool
+      );
+      if (!existing) return false;
+
+      if (testType === 'pre') {
+        return existing.preScore !== null && existing.preScore !== undefined && existing.preScore !== '';
+      } else if (testType === 'post') {
+        return existing.postScore !== null && existing.postScore !== undefined && existing.postScore !== '';
+      }
+      return false;
     }
 
     // -------------------------------------------------------------
@@ -609,21 +681,49 @@
       dropdown.innerHTML = '';
 
       const query = filterText.toUpperCase();
-      const filtered = participantsData.filter(p => p.name.toUpperCase().includes(query));
+      const filtered = participantsData.filter(p => 
+        normalizeText(p.name).includes(query) || normalizeText(p.school).includes(query)
+      );
 
       if (filtered.length === 0) {
         dropdown.innerHTML = '<div class="p-2.5 text-xs text-slate-400 text-center">Belum ada peserta Pre-Test terdaftar</div>';
       } else {
         filtered.forEach(p => {
+          const normName = normalizeText(p.name);
+          const normSchool = normalizeText(p.school);
+          const alreadyDonePost = (p.postScore !== null && p.postScore !== undefined && p.postScore !== '') || 
+                                  isLocallySubmitted(normName, normSchool, 'post');
           const item = document.createElement('div');
-          item.className = 'px-3 py-2 text-xs font-bold text-slate-700 hover:bg-indigo-100 cursor-pointer border-b border-slate-100 flex justify-between items-center';
-          item.innerHTML = `<span>${p.name}</span> <span class="text-[10px] text-indigo-600 font-normal">${p.school}</span>`;
-          item.onclick = function() {
-            document.getElementById('input-participant-name').value = p.name;
-            document.getElementById('input-school-search').value = p.school;
-            document.getElementById('registered-name-search').value = p.name;
-            dropdown.classList.add('hidden');
-          };
+          item.className = `px-3 py-2 text-xs font-bold border-b border-slate-100 flex justify-between items-center ${
+            alreadyDonePost 
+              ? 'bg-slate-50 text-slate-400 cursor-not-allowed' 
+              : 'text-slate-700 hover:bg-indigo-100 cursor-pointer'
+          }`;
+          
+          item.innerHTML = `
+            <div>
+              <span>${p.name}</span>
+              ${alreadyDonePost ? '<span class="ml-1.5 text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-semibold">Sudah Post-Tes</span>' : ''}
+            </div>
+            <span class="text-[10px] text-indigo-600 font-normal text-right">${p.school}</span>
+          `;
+
+          if (!alreadyDonePost) {
+            item.onclick = function() {
+              document.getElementById('input-participant-name').value = p.name;
+              document.getElementById('input-school-search').value = p.school;
+              document.getElementById('registered-name-search').value = p.name;
+              dropdown.classList.add('hidden');
+            };
+          } else {
+            item.onclick = function() {
+              showAlert(
+                'Sudah Mengerjakan',
+                `Peserta atas nama <b>${p.name}</b> dari <b>${p.school}</b> sudah mengirimkan jawaban <b>Post-Tes</b> sebelumnya. Setiap peserta hanya dapat mengirim jawaban satu kali.`
+              );
+            };
+          }
+
           dropdown.appendChild(item);
         });
       }
@@ -638,11 +738,12 @@
     // -------------------------------------------------------------
     // VALIDATION & PROCEED TO QUIZ
     // -------------------------------------------------------------
-    function proceedToQuiz() {
+    async function proceedToQuiz() {
       const testType = document.querySelector('input[name="testType"]:checked').value;
-      const name = document.getElementById('input-participant-name').value.trim().toUpperCase();
-      const school = document.getElementById('input-school-search').value.trim().toUpperCase();
+      const name = normalizeText(document.getElementById('input-participant-name').value);
+      const school = normalizeText(document.getElementById('input-school-search').value);
       const postPassword = document.getElementById('input-post-password').value;
+      const btnProceed = document.getElementById('btn-proceed-quiz');
 
       if (!name) {
         showAlert('Mohon Isi Nama', 'Nama peserta wajib diisi dengan huruf kapital.');
@@ -654,12 +755,41 @@
         return;
       }
 
+      // Pastikan asal sekolah dipilih sesuai daftar sekolah yang valid
+      const isValidSchool = SCHOOL_LIST.some(s => normalizeText(s) === school);
+      if (!isValidSchool) {
+        showAlert('Sekolah Tidak Valid', 'Silakan pilih asal sekolah yang tersedia dari daftar pilihan.');
+        return;
+      }
+
       // Check Password if Post-Test
       if (typeIsPost(testType)) {
         if (postPassword !== 'smp') {
           showAlert('Password Salah', 'Password khusus Post-Test adalah "smp". Silakan coba lagi.');
           return;
         }
+      }
+
+      // Sinkronkan data terbaru dari server terlebih dahulu untuk mencegah pengiriman ganda dari perangkat lain
+      const originalBtnHtml = btnProceed.innerHTML;
+      btnProceed.disabled = true;
+      btnProceed.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Memeriksa Data...</span>';
+
+      try {
+        await fetchCloudData();
+      } finally {
+        btnProceed.disabled = false;
+        btnProceed.innerHTML = originalBtnHtml;
+      }
+
+      // Validasi kombinasi Nama Peserta + Asal Sekolah: hanya boleh mengirim 1 kali per jenis tes
+      if (hasAlreadySubmitted(name, school, testType)) {
+        const testLabel = testType === 'pre' ? 'Pree-Tes' : 'Post-Tes';
+        showAlert(
+          'Akses Ditolak (Sudah Mengisi)',
+          `Peserta <b>${name}</b> dari <b>${school}</b> sudah pernah mengirimkan jawaban <b>${testLabel}</b>.<br><br>Setiap peserta hanya diperbolehkan mengirim masing-masing jawaban satu kali.`
+        );
+        return;
       }
 
       // Save Current Participant Info
@@ -738,41 +868,72 @@
       });
     }
 
-    function submitQuiz(event) {
+    async function submitQuiz(event) {
       event.preventDefault();
-      
-      let totalScore = 0;
-      QUESTIONS_DATA.forEach(q => {
-        const selected = document.querySelector(`input[name="q_${q.id}"]:checked`);
-        if (selected && selected.value === q.key) {
-          totalScore += 10;
+      if (!currentParticipant) return;
+
+      const btnSubmit = document.getElementById('btn-submit-quiz');
+      const originalBtnHtml = btnSubmit.innerHTML;
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengirim Jawaban...';
+
+      try {
+        // Cek ulang ke server sebelum menyimpan untuk mencegah double submit (misal dari 2 tab/perangkat bersamaan)
+        await fetchCloudData();
+
+        if (hasAlreadySubmitted(currentParticipant.name, currentParticipant.school, currentParticipant.testType)) {
+          const testLabel = currentParticipant.testType === 'pre' ? 'Pree-Tes' : 'Post-Tes';
+          showAlert(
+            'Pengiriman Dibatalkan',
+            `Peserta <b>${currentParticipant.name}</b> dari <b>${currentParticipant.school}</b> sudah tercatat mengirimkan jawaban <b>${testLabel}</b> sebelumnya. Jawaban ganda tidak dapat disimpan.`
+          );
+          document.getElementById('section-quiz').classList.add('hidden');
+          document.getElementById('section-welcome').classList.remove('hidden');
+          currentParticipant = null;
+          return;
         }
-      });
 
-      // Simpan skor ke memori & kirimkan ke Google Sheets Database
-      saveParticipantResult(currentParticipant.name, currentParticipant.school, currentParticipant.testType, totalScore);
+        let totalScore = 0;
+        QUESTIONS_DATA.forEach(q => {
+          const selected = document.querySelector(`input[name="q_${q.id}"]:checked`);
+          if (selected && selected.value === q.key) {
+            totalScore += 10;
+          }
+        });
 
-      // Tampilkan notifikasi berhasil
-      showAlert(
-        'Tes Selesai!',
-        `Selamat <b>${currentParticipant.name}</b>, Anda telah menyelesaikan ${currentParticipant.testType === 'pre' ? 'Pree-Tes' : 'Post-Tes'}. Total Nilai Anda: <b>${totalScore} / 100</b>.<br><span class="text-xs text-emerald-600 mt-2 block"><i class="fa-solid fa-cloud-arrow-up mr-1"></i> Data nilai berhasil tersimpan secara online.</span>`
-      );
+        // Simpan skor ke memori, tandai di localStorage & kirimkan ke Google Sheets Database
+        saveParticipantResult(currentParticipant.name, currentParticipant.school, currentParticipant.testType, totalScore);
 
-      // Sembunyikan formulir soal dan kembali ke halaman utama
-      document.getElementById('section-quiz').classList.add('hidden');
-      document.getElementById('section-welcome').classList.remove('hidden');
+        // Tampilkan notifikasi berhasil
+        showAlert(
+          'Tes Selesai!',
+          `Selamat <b>${currentParticipant.name}</b> (${currentParticipant.school}), Anda telah menyelesaikan ${currentParticipant.testType === 'pre' ? 'Pree-Tes' : 'Post-Tes'}. Total Nilai Anda: <b>${totalScore} / 100</b>.<br><span class="text-xs text-emerald-600 mt-2 block"><i class="fa-solid fa-cloud-arrow-up mr-1"></i> Data nilai berhasil tersimpan secara online.</span>`
+        );
+
+        // Sembunyikan formulir soal dan kembali ke halaman utama
+        document.getElementById('section-quiz').classList.add('hidden');
+        document.getElementById('section-welcome').classList.remove('hidden');
+        currentParticipant = null;
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = originalBtnHtml;
+      }
     }
 
     // -------------------------------------------------------------
     // DATA MANAGEMENT & STATE RECORDING (WITH GOOGLE SHEETS SYNC)
     // -------------------------------------------------------------
     function saveParticipantResult(name, school, testType, score) {
-      let existing = participantsData.find(p => p.name.toUpperCase() === name.toUpperCase());
+      const normalizedName = normalizeText(name);
+      const normalizedSchool = normalizeText(school);
+      let existing = participantsData.find(
+        p => normalizeText(p.name) === normalizedName && normalizeText(p.school) === normalizedSchool
+      );
 
       if (!existing) {
         existing = {
-          name: name,
-          school: school,
+          name: normalizedName,
+          school: normalizedSchool,
           preScore: null,
           postScore: null
         };
@@ -780,10 +941,14 @@
       }
 
       if (testType === 'pre') {
+        if (existing.preScore !== null && existing.preScore !== undefined && existing.preScore !== '') return;
         existing.preScore = score;
       } else if (testType === 'post') {
+        if (existing.postScore !== null && existing.postScore !== undefined && existing.postScore !== '') return;
         existing.postScore = score;
       }
+
+      markLocalSubmission(normalizedName, normalizedSchool, testType);
 
       // Sinkronkan ke Google Sheets di background
       if (GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes("AKfycbxXXXXXXXXXXXXX")) {
@@ -793,8 +958,8 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             action: "SAVE_TEST",
-            name: name,
-            school: school,
+            name: normalizedName,
+            school: normalizedSchool,
             testType: testType,
             score: score
           })
@@ -803,7 +968,7 @@
     }
 
     // -------------------------------------------------------------
-    // DASHBOARD / HALAMAN DUA LOGIC & PASSWORD
+    // DASHBOARD / HALAMAN DUA LOGIC, SORTING & PASSWORD
     // -------------------------------------------------------------
     function askDashboardPassword() {
       document.getElementById('input-dashboard-password').value = '';
@@ -842,6 +1007,49 @@
       document.getElementById('section-welcome').classList.remove('hidden');
     }
 
+    function changeSort(sortType) {
+      currentSortBy = sortType;
+      const selectEl = document.getElementById('sort-select');
+      if (selectEl && selectEl.value !== sortType) {
+        selectEl.value = sortType;
+      }
+      renderDashboard();
+    }
+
+    function getSortedParticipants() {
+      const list = [...participantsData];
+
+      if (currentSortBy === 'pre') {
+        list.sort((a, b) => {
+          const aHas = a.preScore !== null && a.preScore !== undefined && a.preScore !== '';
+          const bHas = b.preScore !== null && b.preScore !== undefined && b.preScore !== '';
+          const aVal = aHas ? Number(a.preScore) : -Infinity;
+          const bVal = bHas ? Number(b.preScore) : -Infinity;
+          return bVal - aVal; // Nilai Pre-Test tertinggi di atas
+        });
+      } else if (currentSortBy === 'post') {
+        list.sort((a, b) => {
+          const aHas = a.postScore !== null && a.postScore !== undefined && a.postScore !== '';
+          const bHas = b.postScore !== null && b.postScore !== undefined && b.postScore !== '';
+          const aVal = aHas ? Number(a.postScore) : -Infinity;
+          const bVal = bHas ? Number(b.postScore) : -Infinity;
+          return bVal - aVal; // Nilai Post-Test tertinggi di atas
+        });
+      } else if (currentSortBy === 'delta') {
+        list.sort((a, b) => {
+          const aValid = (a.preScore !== null && a.preScore !== undefined && a.preScore !== '') &&
+                         (a.postScore !== null && a.postScore !== undefined && a.postScore !== '');
+          const bValid = (b.preScore !== null && b.preScore !== undefined && b.preScore !== '') &&
+                         (b.postScore !== null && b.postScore !== undefined && b.postScore !== '');
+          const aDelta = aValid ? (Number(a.postScore) - Number(a.preScore)) : -Infinity;
+          const bDelta = bValid ? (Number(b.postScore) - Number(b.preScore)) : -Infinity;
+          return bDelta - aDelta; // Selisih tertinggi di atas
+        });
+      }
+
+      return list;
+    }
+
     function renderDashboard() {
       const tbody = document.getElementById('table-results-body');
       tbody.innerHTML = '';
@@ -857,19 +1065,29 @@
         document.getElementById('stat-total-students').innerText = '0';
         document.getElementById('stat-avg-pre').innerText = '0';
         document.getElementById('stat-avg-post').innerText = '0';
+        document.getElementById('stat-avg-increase').innerText = '0';
         return;
       }
 
       let totalPre = 0, countPre = 0;
       let totalPost = 0, countPost = 0;
+      let totalDelta = 0, countBoth = 0;
 
-      participantsData.forEach((p, index) => {
-        const preVal = p.preScore !== null ? p.preScore : '-';
-        const postVal = p.postScore !== null ? p.postScore : '-';
+      const sortedList = getSortedParticipants();
+
+      sortedList.forEach((p, index) => {
+        const hasPre = p.preScore !== null && p.preScore !== undefined && p.preScore !== '';
+        const hasPost = p.postScore !== null && p.postScore !== undefined && p.postScore !== '';
+
+        const preVal = hasPre ? Number(p.preScore) : '-';
+        const postVal = hasPost ? Number(p.postScore) : '-';
         
         let deltaHtml = '-';
-        if (p.preScore !== null && p.postScore !== null) {
-          const delta = p.postScore - p.preScore;
+        if (hasPre && hasPost) {
+          const delta = Number(p.postScore) - Number(p.preScore);
+          totalDelta += delta;
+          countBoth++;
+
           if (delta > 0) {
             deltaHtml = `<span class="font-bold text-emerald-600">+${delta}</span>`;
           } else if (delta < 0) {
@@ -879,8 +1097,8 @@
           }
         }
 
-        if (p.preScore !== null) { totalPre += p.preScore; countPre++; }
-        if (p.postScore !== null) { totalPost += p.postScore; countPost++; }
+        if (hasPre) { totalPre += Number(p.preScore); countPre++; }
+        if (hasPost) { totalPost += Number(p.postScore); countPost++; }
 
         const row = document.createElement('tr');
         row.className = 'hover:bg-slate-50/80 transition';
@@ -899,10 +1117,23 @@
       document.getElementById('stat-total-students').innerText = participantsData.length;
       document.getElementById('stat-avg-pre').innerText = countPre > 0 ? (totalPre / countPre).toFixed(1) : '0';
       document.getElementById('stat-avg-post').innerText = countPost > 0 ? (totalPost / countPost).toFixed(1) : '0';
+
+      const avgIncreaseEl = document.getElementById('stat-avg-increase');
+      if (countBoth > 0) {
+        const avgDelta = totalDelta / countBoth;
+        const formattedDelta = avgDelta > 0 ? `+${avgDelta.toFixed(1)}` : avgDelta.toFixed(1);
+        avgIncreaseEl.innerText = formattedDelta;
+        avgIncreaseEl.className = `text-2xl font-bold mt-1 ${
+          avgDelta > 0 ? 'text-emerald-700' : avgDelta < 0 ? 'text-rose-700' : 'text-sky-900'
+        }`;
+      } else {
+        avgIncreaseEl.innerText = '0';
+        avgIncreaseEl.className = 'text-2xl font-bold text-sky-900 mt-1';
+      }
     }
 
     // -------------------------------------------------------------
-    // EXPORT TO EXCEL FEATURE
+    // EXPORT TO EXCEL FEATURE (Mengikuti urutan yang sedang aktif)
     // -------------------------------------------------------------
     function exportToExcel() {
       if (participantsData.length === 0) {
@@ -910,14 +1141,20 @@
         return;
       }
 
-      const excelData = participantsData.map((p, idx) => ({
-        "No": idx + 1,
-        "Nama Peserta": p.name,
-        "Asal Sekolah": p.school,
-        "Nilai Pre-Test": p.preScore !== null ? p.preScore : "-",
-        "Nilai Post-Test": p.postScore !== null ? p.postScore : "-",
-        "Selisih (Post - Pre)": (p.preScore !== null && p.postScore !== null) ? (p.postScore - p.preScore) : "-"
-      }));
+      const sortedList = getSortedParticipants();
+
+      const excelData = sortedList.map((p, idx) => {
+        const hasPre = p.preScore !== null && p.preScore !== undefined && p.preScore !== '';
+        const hasPost = p.postScore !== null && p.postScore !== undefined && p.postScore !== '';
+        return {
+          "No": idx + 1,
+          "Nama Peserta": p.name,
+          "Asal Sekolah": p.school,
+          "Nilai Pre-Test": hasPre ? Number(p.preScore) : "-",
+          "Nilai Post-Test": hasPost ? Number(p.postScore) : "-",
+          "Selisih (Post - Pre)": (hasPre && hasPost) ? (Number(p.postScore) - Number(p.preScore)) : "-"
+        };
+      });
 
       const worksheet = XLSX.utils.json_to_sheet(excelData);
       const workbook = XLSX.utils.book_new();
@@ -938,38 +1175,7 @@
     }
 
     // -------------------------------------------------------------
-    // RESET DATA FEATURE (WITH GOOGLE SHEETS SYNC)
-    // -------------------------------------------------------------
-    function confirmResetData() {
-      if (participantsData.length === 0) {
-        showAlert('Data Kosong', 'Tidak ada data nilai yang tersimpan untuk di-reset.');
-        return;
-      }
-
-      showConfirm(
-        'Reset Seluruh Data?',
-        'Apakah Anda yakin ingin menghapus semua rekap nilai peserta? Data yang tersimpan di Google Sheets juga akan di-reset.',
-        function() {
-          participantsData = [];
-          renderDashboard();
-
-          // Reset data pada Google Sheets
-          if (GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes("AKfycbxXXXXXXXXXXXXX")) {
-            fetch(GOOGLE_SCRIPT_URL, {
-              method: "POST",
-              mode: "no-cors",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ action: "RESET" })
-            }).catch(err => console.error("Error reset data di cloud:", err));
-          }
-
-          showAlert('Berhasil', 'Seluruh data nilai peserta berhasil di-reset.');
-        }
-      );
-    }
-
-    // -------------------------------------------------------------
-    // CUSTOM ALERT & CONFIRM MODAL
+    // CUSTOM ALERT MODAL
     // -------------------------------------------------------------
     function showAlert(title, message) {
       document.getElementById('alert-title').innerText = title;
@@ -983,32 +1189,6 @@
           Mengerti
         </button>
       `;
-      document.getElementById('modal-alert').classList.remove('hidden');
-    }
-
-    function showConfirm(title, message, onConfirmCallback) {
-      document.getElementById('alert-title').innerText = title;
-      document.getElementById('alert-message').innerHTML = message;
-      document.getElementById('alert-icon').className = 'w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 text-xl bg-rose-100 text-rose-600';
-      document.getElementById('alert-icon').innerHTML = '<i class="fa-solid fa-trash-can"></i>';
-
-      const actions = document.getElementById('alert-actions');
-      actions.innerHTML = `
-        <button onclick="closeAlertModal()" class="w-1/2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2.5 rounded-xl text-sm transition">
-          Batal
-        </button>
-        <button id="btn-confirm-action" class="w-1/2 bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 rounded-xl text-sm shadow transition">
-          Hapus Data
-        </button>
-      `;
-
-      document.getElementById('btn-confirm-action').onclick = function() {
-        closeAlertModal();
-        if (typeof onConfirmCallback === 'function') {
-          onConfirmCallback();
-        }
-      };
-
       document.getElementById('modal-alert').classList.remove('hidden');
     }
 
