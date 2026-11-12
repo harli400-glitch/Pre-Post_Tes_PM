@@ -524,6 +524,7 @@
     let currentParticipant = null; // { name, school, testType }
     let currentSortBy = 'default'; // 'default' | 'pre' | 'post' | 'delta'
     const LOCAL_SUBMISSION_KEY = 'halut_eval_submitted_v1';
+    const LOCAL_DISPLAY_NAMES_KEY = 'halut_eval_display_names_v1';
 
     // -------------------------------------------------------------
     // INITIALIZATION & EVENT LISTENERS
@@ -549,6 +550,33 @@
       });
     };
 
+    // Simpan & ambil penulisan nama asli dari localStorage (jika server lama menyimpan dalam huruf kapital semua)
+    function getSavedDisplayNames() {
+      try {
+        return JSON.parse(localStorage.getItem(LOCAL_DISPLAY_NAMES_KEY) || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveDisplayName(originalName, school) {
+      try {
+        const map = getSavedDisplayNames();
+        const key = `${normalizeCompare(originalName)}|${normalizeCompare(school)}`;
+        map[key] = cleanText(originalName);
+        localStorage.setItem(LOCAL_DISPLAY_NAMES_KEY, JSON.stringify(map));
+      } catch (e) {
+        // Abaikan jika localStorage diblokir
+      }
+    }
+
+    function resolveDisplayName(name, school) {
+      const cleaned = cleanText(name);
+      const map = getSavedDisplayNames();
+      const key = `${normalizeCompare(cleaned)}|${normalizeCompare(school)}`;
+      return map[key] || cleaned;
+    }
+
     // Ambil data peserta secara real-time dari Google Sheets
     async function fetchCloudData() {
       if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("AKfycbxXXXXXXXXXXXXXXXX")) return;
@@ -561,7 +589,10 @@
         
         const json = await res.json();
         if (json.status === "success" && Array.isArray(json.data)) {
-          participantsData = json.data;
+          participantsData = json.data.map(item => ({
+            ...item,
+            name: resolveDisplayName(item.name, item.school)
+          }));
         }
       } catch (err) {
         console.warn("Gagal mengambil data dari Google Sheets / Timeout, menggunakan data lokal:", err);
@@ -800,7 +831,8 @@
         return;
       }
 
-      // Save Current Participant Info
+      // Save Current Participant Info (mempertahankan penulisan huruf asli)
+      saveDisplayName(name, matchedSchool);
       currentParticipant = {
         name: name,
         school: matchedSchool,
@@ -937,6 +969,8 @@
       const compareName = normalizeCompare(cleanedName);
       const compareSchool = normalizeCompare(cleanedSchool);
 
+      saveDisplayName(cleanedName, cleanedSchool);
+
       let existing = participantsData.find(
         p => normalizeCompare(p.name) === compareName && normalizeCompare(p.school) === compareSchool
       );
@@ -949,6 +983,8 @@
           postScore: null
         };
         participantsData.push(existing);
+      } else {
+        existing.name = cleanedName;
       }
 
       if (testType === 'pre') {
@@ -961,7 +997,7 @@
 
       markLocalSubmission(compareName, compareSchool, testType);
 
-      // Sinkronkan ke Google Sheets di background
+      // Sinkronkan ke Google Sheets di background (menggunakan format penulisan asli pengguna)
       if (GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes("AKfycbxXXXXXXXXXXXXX")) {
         fetch(GOOGLE_SCRIPT_URL, {
           method: "POST",
@@ -1111,11 +1147,13 @@
         if (hasPre) { totalPre += Number(p.preScore); countPre++; }
         if (hasPost) { totalPost += Number(p.postScore); countPost++; }
 
+        const displayName = resolveDisplayName(p.name, p.school);
+
         const row = document.createElement('tr');
         row.className = 'hover:bg-slate-50/80 transition';
         row.innerHTML = `
           <td class="p-3 text-slate-400 font-mono text-xs">${index + 1}</td>
-          <td class="p-3 font-bold text-slate-800">${p.name}</td>
+          <td class="p-3 font-bold text-slate-800 normal-case" style="text-transform: none;">${displayName}</td>
           <td class="p-3 text-xs text-slate-600">${p.school}</td>
           <td class="p-3 text-center font-semibold text-indigo-600">${preVal}</td>
           <td class="p-3 text-center font-semibold text-emerald-600">${postVal}</td>
@@ -1157,9 +1195,10 @@
       const excelData = sortedList.map((p, idx) => {
         const hasPre = p.preScore !== null && p.preScore !== undefined && p.preScore !== '';
         const hasPost = p.postScore !== null && p.postScore !== undefined && p.postScore !== '';
+        const displayName = resolveDisplayName(p.name, p.school);
         return {
           "No": idx + 1,
-          "Nama Peserta": p.name,
+          "Nama Peserta": displayName,
           "Asal Sekolah": p.school,
           "Nilai Pre-Test": hasPre ? Number(p.preScore) : "-",
           "Nilai Post-Test": hasPost ? Number(p.postScore) : "-",
