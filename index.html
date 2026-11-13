@@ -38,18 +38,22 @@
 
   <!-- Header Banner -->
   <header class="bg-indigo-700 text-white shadow-md sticky top-0 z-20">
-    <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-      <div class="flex items-center space-x-3">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center gap-2">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="goToHome()">
         <div class="bg-white p-2 rounded-lg text-indigo-700 font-bold text-xl">
           <i class="fa-solid fa-graduation-cap"></i>
         </div>
         <div>
-          <h1 class="font-bold text-lg md:text-xl leading-tight">Evaluasi Pembelajaran Mendalam</h1>
+          <h1 class="font-bold text-base sm:text-lg md:text-xl leading-tight">Evaluasi Pembelajaran Mendalam</h1>
           <p class="text-xs text-indigo-200">Kabupaten Halmahera Utara</p>
         </div>
       </div>
       <div class="flex items-center space-x-2">
-        <button id="btn-open-dashboard" onclick="askDashboardPassword()" class="bg-indigo-600 hover:bg-indigo-800 text-white px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 border border-indigo-400">
+        <button id="btn-open-tasks" onclick="openTasksPage()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-2 border border-emerald-400 shadow-sm">
+          <i class="fa-solid fa-folder-open"></i>
+          <span>Rekap Tugas</span>
+        </button>
+        <button id="btn-open-dashboard" onclick="askDashboardPassword()" class="bg-indigo-600 hover:bg-indigo-800 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-2 border border-indigo-400">
           <i class="fa-solid fa-chart-line"></i>
           <span class="hidden sm:inline">Nilai</span>
         </button>
@@ -58,27 +62,32 @@
   </header>
 
   <!-- Main Container -->
-  <main class="max-w-4xl mx-auto px-4 py-8 flex-grow w-full">
+  <main class="max-w-5xl mx-auto px-4 py-8 flex-grow w-full">
 
     <!-- WELCOME / REGISTRATION CARD (If active) -->
-    <div id="section-welcome" class="bg-white rounded-2xl shadow-xl p-6 md:p-8 text-center border border-slate-100 mb-6">
+    <div id="section-welcome" class="bg-white rounded-2xl shadow-xl p-6 md:p-8 text-center border border-slate-100 mb-6 max-w-4xl mx-auto">
       <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
         <i class="fa-solid fa-clipboard-list"></i>
       </div>
-      <h2 class="text-2xl font-bold text-slate-800 mb-2">Selamat Datang di Portal Tes</h2>
-      <p class="text-slate-600 max-w-md mx-auto mb-6 text-sm">
+      <h2 class="text-2xl font-bold text-slate-800 mb-2">Selamat Datang di Portal Tes & Tugas</h2>
+      <p class="text-slate-600 max-w-md mx-auto mb-4 text-sm">
        Bimbingan Teknis, Pelatihan Dan atau Magang untuk Peningkatan Kapasitas Bidang Pendidikan melalui Pembelajaran Mendalam.
       </p>
-      <p class="text-slate-600 max-w-md mx-auto mb-6 text-sm">
+      <p class="text-slate-600 max-w-md mx-auto mb-6 text-sm font-medium">
        Bidang SMP: 12–13 November 2026
       </p>
-      <button onclick="openRegistrationModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-indigo-200 transition transform hover:-translate-y-0.5">
-        <i class="fa-solid fa-pen-to-square mr-2"></i> Mulai TES
-      </button>
+      <div class="flex flex-wrap justify-center gap-3">
+        <button onclick="openRegistrationModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-indigo-200 transition transform hover:-translate-y-0.5 flex items-center gap-2">
+          <i class="fa-solid fa-pen-to-square"></i> Mulai TES
+        </button>
+        <button onclick="openTasksPage()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-emerald-200 transition transform hover:-translate-y-0.5 flex items-center gap-2">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Rekap & Kirim Tugas
+        </button>
+      </div>
     </div>
 
     <!-- TEST QUESTIONS SECTION (Hidden by default) -->
-    <div id="section-quiz" class="hidden bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+    <div id="section-quiz" class="hidden bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden max-w-4xl mx-auto">
       <!-- Quiz Header Info -->
       <div class="bg-slate-50 border-b border-slate-200 p-4 md:p-6 flex flex-wrap justify-between items-center gap-4">
         <div>
@@ -108,8 +117,93 @@
       </form>
     </div>
 
-    <!-- DASHBOARD / HALAMAN DUA (Hidden by default) -->
-    <div id="section-dashboard" class="hidden bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8">
+    <!-- HALAMAN REKAP TUGAS (Hidden by default) -->
+    <div id="section-tasks" class="hidden bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8">
+      <!-- Header Halaman Rekap Tugas -->
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-slate-200">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-folder-open text-emerald-600"></i> Rekap Pengumpulan Tugas
+          </h2>
+          <p class="text-sm text-slate-500">Daftar peserta berdasarkan abjad beserta tombol upload langsung ke Google Drive</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <!-- Tombol Download File Excel -->
+          <button onclick="exportTasksToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition flex items-center gap-2 shadow">
+            <i class="fa-solid fa-file-excel"></i> Download Excel
+          </button>
+          <!-- Tombol Reset Tugas (Password: harli) -->
+          <button onclick="askResetTasksPassword()" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition flex items-center gap-2 shadow">
+            <i class="fa-solid fa-rotate-left"></i> Reset Tugas
+          </button>
+          <button onclick="closeTasksPage()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2.5 rounded-xl font-medium text-sm transition">
+            Kembali
+          </button>
+        </div>
+      </div>
+
+      <!-- Input File Tersembunyi untuk Upload Langsung Per Baris Peserta (Tanpa Batas Ukuran) -->
+      <input type="file" id="direct-task-file-input" class="hidden" onchange="handleDirectRowFileChange(this)">
+
+      <!-- Ringkasan Status Tugas -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
+        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl">
+          <span class="text-xs text-slate-500 font-semibold uppercase">Total Peserta Terdaftar</span>
+          <p id="task-stat-total" class="text-2xl font-bold text-slate-800 mt-1">0</p>
+        </div>
+        <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
+          <span class="text-xs text-emerald-600 font-semibold uppercase">Sudah Mengirim Tugas</span>
+          <p id="task-stat-submitted" class="text-2xl font-bold text-emerald-700 mt-1">0</p>
+        </div>
+        <div class="bg-rose-50 border border-rose-100 p-4 rounded-xl">
+          <span class="text-xs text-rose-600 font-semibold uppercase">Belum Mengirim Tugas</span>
+          <p id="task-stat-pending" class="text-2xl font-bold text-rose-700 mt-1">0</p>
+        </div>
+      </div>
+
+      <!-- Filter Pencarian Berdasarkan Nama & Keterangan -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5 bg-slate-50 p-4 rounded-xl border border-slate-200">
+        <div class="md:col-span-2">
+          <label for="task-search-name" class="block text-xs font-bold text-slate-700 mb-1">
+            <i class="fa-solid fa-magnifying-glass text-indigo-600 mr-1"></i> Cari Berdasarkan Nama Peserta:
+          </label>
+          <input type="text" id="task-search-name" onkeyup="renderTasksTable()" placeholder="Ketik nama peserta..." class="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-xl px-3.5 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+        <div>
+          <label for="task-filter-status" class="block text-xs font-bold text-slate-700 mb-1">
+            <i class="fa-solid fa-filter text-indigo-600 mr-1"></i> Filter Keterangan:
+          </label>
+          <div class="relative">
+            <select id="task-filter-status" onchange="renderTasksTable()" class="w-full appearance-none bg-white border border-slate-300 text-slate-700 text-sm font-medium rounded-xl px-3.5 py-2 pr-9 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+              <option value="all">Semua Keterangan</option>
+              <option value="sudah">Sudah Mengirim (Lihat)</option>
+              <option value="belum">Belum Mengirim</option>
+            </select>
+            <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabel Rekap Tugas -->
+      <div class="overflow-x-auto rounded-xl border border-slate-200">
+        <table class="w-full text-left border-collapse text-sm">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+              <th class="p-3.5 w-14">No</th>
+              <th class="p-3.5">Nama Peserta (A–Z)</th>
+              <th class="p-3.5">Nama Sekolah</th>
+              <th class="p-3.5 text-center w-56">Keterangan & Upload</th>
+            </tr>
+          </thead>
+          <tbody id="table-tasks-body" class="divide-y divide-slate-100 text-slate-700">
+            <!-- Baris dirender secara dinamis -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- DASHBOARD / HALAMAN NILAI (Hidden by default) -->
+    <div id="section-dashboard" class="hidden bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8 max-w-4xl mx-auto">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-slate-200">
         <div>
           <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
@@ -191,7 +285,7 @@
     &copy; 2026 - Aplikasi Form Evaluasi Pembelajaran Halmahera Utara.
   </footer>
 
-  <!-- POP-UP MODAL FORMULIR AWAL -->
+  <!-- POP-UP MODAL FORMULIR AWAL TES -->
   <div id="modal-registration" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center p-3 sm:p-4 hidden">
     <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all border border-slate-100 flex flex-col h-[85vh] max-h-[95vh] min-h-[480px]">
       
@@ -202,7 +296,7 @@
         </h3>
       </div>
 
-      <!-- Modal Body (Scrollable if height exceeds screen) -->
+      <!-- Modal Body -->
       <div class="p-4 sm:p-6 space-y-4 overflow-y-auto custom-scrollbar flex-grow">
         
         <!-- 1. Pilihan Pre-Tes / Post-Tes -->
@@ -263,7 +357,7 @@
 
       </div>
 
-      <!-- Modal Footer / Actions (Always Sticky at Bottom) -->
+      <!-- Modal Footer / Actions -->
       <div class="bg-slate-50 px-5 py-3 flex justify-end gap-2.5 border-t border-slate-200 shrink-0">
         <button type="button" onclick="closeRegistrationModal()" class="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-200 font-medium text-xs sm:text-sm transition">
           Batal
@@ -277,7 +371,7 @@
     </div>
   </div>
 
-  <!-- PASSWORD MODAL FOR DASHBOARD (HALAMAN DUA) -->
+  <!-- PASSWORD MODAL FOR DASHBOARD (HALAMAN NILAI) -->
   <div id="modal-dashboard-auth" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center p-4 hidden">
     <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100">
       <div class="bg-slate-800 text-white px-6 py-4 flex items-center gap-2">
@@ -293,6 +387,30 @@
       <div class="bg-slate-50 px-6 py-3 flex justify-end gap-2 border-t border-slate-200">
         <button onclick="closeDashboardAuthModal()" class="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-xl text-sm font-medium">Batal</button>
         <button onclick="verifyDashboardPassword()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow">Buka Halaman</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASSWORD MODAL FOR RESET TUGAS -->
+  <div id="modal-reset-tasks-auth" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center p-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100">
+      <div class="bg-rose-700 text-white px-6 py-4 flex items-center gap-2">
+        <i class="fa-solid fa-triangle-exclamation text-amber-300"></i>
+        <h3 class="font-bold text-base">Reset Semua Unggahan Tugas</h3>
+      </div>
+      <div class="p-6 space-y-4">
+        <p class="text-sm text-slate-600">
+          Tindakan ini akan menghapus seluruh tautan tugas peserta sehingga status keterangan semua peserta kembali menjadi <b>Belum</b>. Masukkan password untuk melanjutkan:
+        </p>
+        <div>
+          <input type="password" id="input-reset-tasks-password" placeholder="Masukkan password..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-rose-500 text-sm">
+        </div>
+      </div>
+      <div class="bg-slate-50 px-6 py-3 flex justify-end gap-2 border-t border-slate-200">
+        <button onclick="closeResetTasksAuthModal()" class="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-xl text-sm font-medium">Batal</button>
+        <button id="btn-confirm-reset-tasks" onclick="verifyAndResetTasks()" class="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow flex items-center gap-2">
+          <span>Reset Sekarang</span>
+        </button>
       </div>
     </div>
   </div>
@@ -316,7 +434,7 @@
   <!-- JAVASCRIPT APP LOGIC -->
   <script>
     // -------------------------------------------------------------
-    // INTEGRASI GOOGLE SHEETS / APPS SCRIPT
+    // INTEGRASI GOOGLE SHEETS & GOOGLE DRIVE (APPS SCRIPT)
     // -------------------------------------------------------------
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzfw2VGHTAkCY2UiLfRTz79ITv9-lZDJcKDuElLNpLBlng91xT7yRrhRQj9GzYcqbhn/exec";
 
@@ -520,11 +638,13 @@
     // -------------------------------------------------------------
     // IN-MEMORY APP STATE
     // -------------------------------------------------------------
-    let participantsData = [];
+    let participantsData = []; // { name, school, preScore, postScore, taskUrl }
     let currentParticipant = null; // { name, school, testType }
+    let selectedTaskParticipant = null; // { name, school }
     let currentSortBy = 'default'; // 'default' | 'pre' | 'post' | 'delta'
     const LOCAL_SUBMISSION_KEY = 'halut_eval_submitted_v1';
     const LOCAL_DISPLAY_NAMES_KEY = 'halut_eval_display_names_v1';
+    const LOCAL_TASKS_KEY = 'halut_eval_tasks_v1';
 
     // -------------------------------------------------------------
     // INITIALIZATION & EVENT LISTENERS
@@ -550,7 +670,14 @@
       });
     };
 
-    // Simpan & ambil penulisan nama asli dari localStorage (jika server lama menyimpan dalam huruf kapital semua)
+    function goToHome() {
+      document.getElementById('section-quiz').classList.add('hidden');
+      document.getElementById('section-dashboard').classList.add('hidden');
+      document.getElementById('section-tasks').classList.add('hidden');
+      document.getElementById('section-welcome').classList.remove('hidden');
+    }
+
+    // Simpan & ambil penulisan nama asli dari localStorage
     function getSavedDisplayNames() {
       try {
         return JSON.parse(localStorage.getItem(LOCAL_DISPLAY_NAMES_KEY) || '{}');
@@ -565,9 +692,7 @@
         const key = `${normalizeCompare(originalName)}|${normalizeCompare(school)}`;
         map[key] = cleanText(originalName);
         localStorage.setItem(LOCAL_DISPLAY_NAMES_KEY, JSON.stringify(map));
-      } catch (e) {
-        // Abaikan jika localStorage diblokir
-      }
+      } catch (e) {}
     }
 
     function resolveDisplayName(name, school) {
@@ -577,12 +702,39 @@
       return map[key] || cleaned;
     }
 
+    // Simpan & ambil link tugas lokal sebagai cadangan
+    function getLocalTasksMap() {
+      try {
+        return JSON.parse(localStorage.getItem(LOCAL_TASKS_KEY) || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveLocalTaskUrl(name, school, taskUrl) {
+      try {
+        const map = getLocalTasksMap();
+        const key = `${normalizeCompare(name)}|${normalizeCompare(school)}`;
+        map[key] = taskUrl;
+        localStorage.setItem(LOCAL_TASKS_KEY, JSON.stringify(map));
+      } catch (e) {}
+    }
+
+    function resolveTaskUrl(name, school, cloudTaskUrl) {
+      if (cloudTaskUrl && String(cloudTaskUrl).trim() !== '') {
+        return String(cloudTaskUrl).trim();
+      }
+      const map = getLocalTasksMap();
+      const key = `${normalizeCompare(name)}|${normalizeCompare(school)}`;
+      return map[key] || '';
+    }
+
     // Ambil data peserta secara real-time dari Google Sheets
     async function fetchCloudData() {
       if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("AKfycbxXXXXXXXXXXXXXXXX")) return;
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 detik timeout fallback
+        const timeoutId = setTimeout(() => controller.abort(), 6000);
         
         const res = await fetch(GOOGLE_SCRIPT_URL, { signal: controller.signal });
         clearTimeout(timeoutId);
@@ -591,7 +743,8 @@
         if (json.status === "success" && Array.isArray(json.data)) {
           participantsData = json.data.map(item => ({
             ...item,
-            name: resolveDisplayName(item.name, item.school)
+            name: resolveDisplayName(item.name, item.school),
+            taskUrl: resolveTaskUrl(item.name, item.school, item.taskUrl)
           }));
         }
       } catch (err) {
@@ -599,17 +752,17 @@
       }
     }
 
-    // Helper: Rapikan spasi berlebih sambil mempertahankan kapitalisasi asli pengguna
+    // Helper: Rapikan spasi berlebih
     function cleanText(text) {
       return String(text || '').trim().replace(/\s+/g, ' ');
     }
 
-    // Helper: Normalisasi teks untuk perbandingan case-insensitive (agar "Budi" & "BUDI" tetap terdeteksi sama)
+    // Helper: Normalisasi teks untuk perbandingan case-insensitive
     function normalizeCompare(text) {
       return cleanText(text).toUpperCase();
     }
 
-    // Helper: Penyimpanan lokal untuk mencegah pengiriman berulang dari browser yang sama
+    // Helper: Penyimpanan lokal untuk mencegah pengiriman berulang
     function getLocalSubmissions() {
       try {
         return JSON.parse(localStorage.getItem(LOCAL_SUBMISSION_KEY) || '{}');
@@ -624,9 +777,7 @@
         const key = `${compareName}|${compareSchool}|${testType}`;
         records[key] = true;
         localStorage.setItem(LOCAL_SUBMISSION_KEY, JSON.stringify(records));
-      } catch (e) {
-        // Abaikan jika localStorage diblokir
-      }
+      } catch (e) {}
     }
 
     function isLocallySubmitted(compareName, compareSchool, testType) {
@@ -635,7 +786,6 @@
       return Boolean(records[key]);
     }
 
-    // Helper: Cek apakah kombinasi (nama peserta + asal sekolah) sudah pernah mengirim jawaban untuk jenis tes tertentu
     function hasAlreadySubmitted(rawName, rawSchool, testType) {
       const compareName = normalizeCompare(rawName);
       const compareSchool = normalizeCompare(rawSchool);
@@ -658,10 +808,363 @@
     }
 
     // -------------------------------------------------------------
-    // POP-UP MODAL LOGIC
+    // HALAMAN REKAP TUGAS LOGIC
+    // -------------------------------------------------------------
+    async function openTasksPage() {
+      document.getElementById('section-welcome').classList.add('hidden');
+      document.getElementById('section-quiz').classList.add('hidden');
+      document.getElementById('section-dashboard').classList.add('hidden');
+      document.getElementById('section-tasks').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Tampilkan loading sementara jika data belum ada
+      const tbody = document.getElementById('table-tasks-body');
+      if (participantsData.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" class="p-8 text-center text-slate-400">
+              <i class="fa-solid fa-spinner fa-spin mr-2 text-indigo-600"></i> Memuat daftar peserta & status tugas...
+            </td>
+          </tr>
+        `;
+      }
+
+      await fetchCloudData();
+      renderTasksTable();
+    }
+
+    function closeTasksPage() {
+      document.getElementById('section-tasks').classList.add('hidden');
+      document.getElementById('section-welcome').classList.remove('hidden');
+    }
+
+    // Urutkan peserta berdasarkan abjad (A-Z)
+    function getAlphabeticalParticipants() {
+      return [...participantsData].sort((a, b) => {
+        const nameA = resolveDisplayName(a.name, a.school);
+        const nameB = resolveDisplayName(b.name, b.school);
+        return nameA.localeCompare(nameB, 'id', { sensitivity: 'base' });
+      });
+    }
+
+    function renderTasksTable() {
+      const tbody = document.getElementById('table-tasks-body');
+      const searchQuery = normalizeCompare(document.getElementById('task-search-name').value);
+      const statusFilter = document.getElementById('task-filter-status').value;
+
+      const sortedAll = getAlphabeticalParticipants();
+
+      // Hitung statistik keseluruhan
+      const totalCount = sortedAll.length;
+      const submittedCount = sortedAll.filter(p => Boolean(resolveTaskUrl(p.name, p.school, p.taskUrl))).length;
+      const pendingCount = totalCount - submittedCount;
+
+      document.getElementById('task-stat-total').innerText = totalCount;
+      document.getElementById('task-stat-submitted').innerText = submittedCount;
+      document.getElementById('task-stat-pending').innerText = pendingCount;
+
+      // Filter berdasarkan nama dan status keterangan
+      const filteredList = sortedAll.filter(p => {
+        const displayName = resolveDisplayName(p.name, p.school);
+        const taskLink = resolveTaskUrl(p.name, p.school, p.taskUrl);
+        const isSubmitted = Boolean(taskLink);
+
+        const matchName = normalizeCompare(displayName).includes(searchQuery) || normalizeCompare(p.school).includes(searchQuery);
+        const matchStatus = 
+          statusFilter === 'all' ||
+          (statusFilter === 'sudah' && isSubmitted) ||
+          (statusFilter === 'belum' && !isSubmitted);
+
+        return matchName && matchStatus;
+      });
+
+      tbody.innerHTML = '';
+
+      if (filteredList.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" class="p-8 text-center text-slate-400">
+              ${totalCount === 0 
+                ? 'Belum ada data peserta yang terdaftar.' 
+                : 'Tidak ada data peserta yang sesuai dengan pencarian / filter.'}
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      filteredList.forEach((p, index) => {
+        const displayName = resolveDisplayName(p.name, p.school);
+        const taskLink = resolveTaskUrl(p.name, p.school, p.taskUrl);
+        const isSubmitted = Boolean(taskLink);
+
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-slate-50/80 transition';
+
+        // Kolom No
+        const tdNo = document.createElement('td');
+        tdNo.className = 'p-3.5 text-slate-400 font-mono text-xs';
+        tdNo.innerText = index + 1;
+
+        // Kolom Nama Peserta
+        const tdName = document.createElement('td');
+        tdName.className = 'p-3.5 font-bold text-slate-800';
+        tdName.innerText = displayName;
+
+        // Kolom Nama Sekolah
+        const tdSchool = document.createElement('td');
+        tdSchool.className = 'p-3.5 text-xs sm:text-sm text-slate-600';
+        tdSchool.innerText = p.school;
+
+        // Kolom Keterangan & Tombol Upload Langsung
+        const tdAction = document.createElement('td');
+        tdAction.className = 'p-3.5 text-center';
+
+        const actionWrapper = document.createElement('div');
+        actionWrapper.className = 'flex items-center justify-center gap-2 flex-wrap';
+
+        if (isSubmitted) {
+          const btnView = document.createElement('a');
+          btnView.href = taskLink;
+          btnView.target = '_blank';
+          btnView.rel = 'noopener noreferrer';
+          btnView.className = 'inline-flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition';
+          btnView.innerHTML = '<i class="fa-solid fa-eye"></i> Lihat';
+          actionWrapper.appendChild(btnView);
+        } else {
+          const badgeBelum = document.createElement('span');
+          badgeBelum.className = 'inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-700';
+          badgeBelum.innerText = 'Belum';
+          actionWrapper.appendChild(badgeBelum);
+        }
+
+        const btnUpload = document.createElement('button');
+        btnUpload.type = 'button';
+        btnUpload.className = 'inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition cursor-pointer';
+        btnUpload.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> <span>${isSubmitted ? 'Upload Ulang' : 'Upload'}</span>`;
+        btnUpload.onclick = function() {
+          triggerDirectRowUpload(displayName, p.school, btnUpload);
+        };
+
+        actionWrapper.appendChild(btnUpload);
+        tdAction.appendChild(actionWrapper);
+
+        row.appendChild(tdNo);
+        row.appendChild(tdName);
+        row.appendChild(tdSchool);
+        row.appendChild(tdAction);
+        tbody.appendChild(row);
+      });
+    }
+
+    // Export Rekap Tugas ke Excel
+    function exportTasksToExcel() {
+      const sortedAll = getAlphabeticalParticipants();
+      if (sortedAll.length === 0) {
+        showAlert('Data Kosong', 'Belum ada data peserta untuk diunduh.');
+        return;
+      }
+
+      const excelData = sortedAll.map((p, idx) => {
+        const displayName = resolveDisplayName(p.name, p.school);
+        const taskLink = resolveTaskUrl(p.name, p.school, p.taskUrl);
+        return {
+          "No": idx + 1,
+          "Nama Peserta": displayName,
+          "Nama Sekolah": p.school,
+          "Keterangan": taskLink ? "Sudah Mengirim" : "Belum",
+          "Link File Google Drive": taskLink || "-"
+        };
+      });
+
+      const worksheet = XLSX.utils.json_to_sheet(excelData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Rekap Tugas");
+
+      const maxNameWidth = excelData.reduce((w, r) => Math.max(w, r["Nama Peserta"].length), 15);
+      worksheet["!cols"] = [
+        { wch: 5 },
+        { wch: Math.max(maxNameWidth, 22) },
+        { wch: 35 },
+        { wch: 18 },
+        { wch: 45 }
+      ];
+
+      XLSX.writeFile(workbook, `Rekap_Tugas_Peserta_Halut_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    }
+
+    // -------------------------------------------------------------
+    // UPLOAD LANGSUNG PER BARIS PESERTA KE GOOGLE DRIVE & SHEETS
+    // -------------------------------------------------------------
+    let activeUploadRowButton = null;
+
+    function triggerDirectRowUpload(participantName, participantSchool, buttonEl) {
+      selectedTaskParticipant = {
+        name: participantName,
+        school: participantSchool
+      };
+      activeUploadRowButton = buttonEl;
+
+      const fileInput = document.getElementById('direct-task-file-input');
+      fileInput.value = ''; // Reset agar file dengan nama sama tetap bisa dipilih ulang
+      fileInput.click();
+    }
+
+    // Helper: Konversi File ke Base64 untuk dikirim ke Google Apps Script -> Google Drive
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = reader.result;
+          const base64Data = result.split(',')[1];
+          resolve(base64Data);
+        };
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleDirectRowFileChange(fileInput) {
+      if (!fileInput.files || fileInput.files.length === 0 || !selectedTaskParticipant) {
+        return;
+      }
+
+      const file = fileInput.files[0];
+
+      const targetParticipant = { ...selectedTaskParticipant };
+      const btnSubmit = activeUploadRowButton;
+      const originalBtnHtml = btnSubmit ? btnSubmit.innerHTML : '';
+
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.classList.add('opacity-75', 'cursor-wait');
+        btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Mengunggah...</span>';
+      }
+
+      try {
+        const base64Data = await fileToBase64(file);
+
+        const payload = {
+          action: "UPLOAD_TASK",
+          name: targetParticipant.name,
+          school: targetParticipant.school,
+          fileName: `${targetParticipant.name} - ${targetParticipant.school} - ${file.name}`,
+          mimeType: file.type || "application/octet-stream",
+          fileData: base64Data
+        };
+
+        // Kirim ke Google Apps Script (jalur sama ke Google Drive & Kolom G Google Sheet)
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        if (!result || result.status !== "success" || !result.fileUrl) {
+          throw new Error((result && result.message) || "Gagal mengunggah file ke Google Drive.");
+        }
+
+        const uploadedUrl = result.fileUrl;
+
+        // Perbarui penyimpanan lokal & state aplikasi
+        saveLocalTaskUrl(targetParticipant.name, targetParticipant.school, uploadedUrl);
+        const target = participantsData.find(
+          p => normalizeCompare(p.name) === normalizeCompare(targetParticipant.name) &&
+               normalizeCompare(p.school) === normalizeCompare(targetParticipant.school)
+        );
+        if (target) {
+          target.taskUrl = uploadedUrl;
+        }
+
+        renderTasksTable();
+        showAlert(
+          'Tugas Berhasil Diunggah!',
+          `Tugas milik <b>${targetParticipant.name}</b> (${targetParticipant.school}) berhasil dikirim.`
+        );
+      } catch (err) {
+        console.error("Upload error:", err);
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.classList.remove('opacity-75', 'cursor-wait');
+          btnSubmit.innerHTML = originalBtnHtml;
+        }
+        showAlert(
+          'Gagal Mengunggah Tugas',
+          `Terjadi kendala saat mengunggah file: <br><span class="text-xs text-rose-600 font-mono">${err.message}</span><br><br>Pastikan ID Folder Google Drive di Apps Script sudah diisi dan izin akses telah disetujui.`
+        );
+      } finally {
+        fileInput.value = '';
+        selectedTaskParticipant = null;
+        activeUploadRowButton = null;
+      }
+    }
+
+    // -------------------------------------------------------------
+    // RESET SEMUA UNGGAHAN TUGAS (DENGAN PASSWORD "harli")
+    // -------------------------------------------------------------
+    function askResetTasksPassword() {
+      document.getElementById('input-reset-tasks-password').value = '';
+      document.getElementById('modal-reset-tasks-auth').classList.remove('hidden');
+      document.getElementById('input-reset-tasks-password').focus();
+    }
+
+    function closeResetTasksAuthModal() {
+      document.getElementById('modal-reset-tasks-auth').classList.add('hidden');
+    }
+
+    async function verifyAndResetTasks() {
+      const pass = document.getElementById('input-reset-tasks-password').value;
+      if (pass !== 'harli') {
+        showAlert('Akses Ditolak', 'Password salah!');
+        return;
+      }
+
+      const btnReset = document.getElementById('btn-confirm-reset-tasks');
+      const originalHtml = btnReset.innerHTML;
+      btnReset.disabled = true;
+      btnReset.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Mereset...</span>';
+
+      try {
+        // Hapus semua tautan tugas pada Kolom G di Google Sheet melalui Apps Script
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify({ action: "RESET_TASKS" })
+        });
+
+        const result = await response.json();
+        if (!result || result.status !== "success") {
+          throw new Error((result && result.message) || "Gagal mereset data tugas.");
+        }
+
+        // Bersihkan cache link tugas di localStorage & state aplikasi
+        localStorage.removeItem(LOCAL_TASKS_KEY);
+        participantsData.forEach(p => {
+          p.taskUrl = '';
+        });
+
+        closeResetTasksAuthModal();
+        renderTasksTable();
+        showAlert('Reset Berhasil', 'Seluruh unggahan tugas peserta telah dihapus dan status keterangan kembali menjadi <b>Belum</b>.');
+      } catch (err) {
+        console.error("Reset tasks error:", err);
+        showAlert('Gagal Mereset Tugas', `Terjadi kendala saat mereset tugas: <br><span class="text-xs text-rose-600 font-mono">${err.message}</span>`);
+      } finally {
+        btnReset.disabled = false;
+        btnReset.innerHTML = originalHtml;
+      }
+    }
+
+    // -------------------------------------------------------------
+    // POP-UP MODAL TES AWAL LOGIC
     // -------------------------------------------------------------
     function openRegistrationModal() {
-      fetchCloudData(); // Memastikan nama peserta terbaru ditarik sebelum membuka pop-up
+      fetchCloudData();
       document.getElementById('modal-registration').classList.remove('hidden');
       toggleTestTypeMode(document.querySelector('input[name="testType"]:checked').value);
     }
@@ -714,7 +1217,6 @@
       document.getElementById('school-dropdown').classList.remove('hidden');
     }
 
-    // Registered Participants Logic for Post-Test Quick Search
     function populateRegisteredNamesDropdown(filterText = '') {
       const dropdown = document.getElementById('registered-names-dropdown');
       dropdown.innerHTML = '';
@@ -794,14 +1296,12 @@
         return;
       }
 
-      // Pastikan asal sekolah sesuai daftar sekolah yang valid (tidak peka huruf besar/kecil)
       const matchedSchool = SCHOOL_LIST.find(s => normalizeCompare(s) === normalizeCompare(schoolInput));
       if (!matchedSchool) {
         showAlert('Sekolah Tidak Valid', 'Silakan pilih asal sekolah yang tersedia dari daftar pilihan.');
         return;
       }
 
-      // Check Password if Post-Test
       if (typeIsPost(testType)) {
         if (postPassword !== 'smp') {
           showAlert('Password Salah', 'Silakan coba lagi.');
@@ -809,7 +1309,6 @@
         }
       }
 
-      // Sinkronkan data terbaru dari server terlebih dahulu untuk mencegah pengiriman ganda dari perangkat lain
       const originalBtnHtml = btnProceed.innerHTML;
       btnProceed.disabled = true;
       btnProceed.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Memeriksa Data...</span>';
@@ -821,7 +1320,6 @@
         btnProceed.innerHTML = originalBtnHtml;
       }
 
-      // Validasi kombinasi Nama Peserta + Asal Sekolah: hanya boleh mengirim 1 kali per jenis tes
       if (hasAlreadySubmitted(name, matchedSchool, testType)) {
         const testLabel = testType === 'pre' ? 'Pree-Tes' : 'Post-Tes';
         showAlert(
@@ -831,7 +1329,6 @@
         return;
       }
 
-      // Save Current Participant Info (mempertahankan penulisan huruf asli)
       saveDisplayName(name, matchedSchool);
       currentParticipant = {
         name: name,
@@ -839,7 +1336,6 @@
         testType: testType
       };
 
-      // Set up UI badge and text
       document.getElementById('quiz-participant-name').innerText = name;
       document.getElementById('quiz-participant-school').innerHTML = `<i class="fa-solid fa-school mr-1"></i> ${matchedSchool}`;
       
@@ -852,13 +1348,12 @@
         badge.className = 'inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700 mb-1';
       }
 
-      // Hide Modals & Welcome, Show Quiz
       closeRegistrationModal();
       document.getElementById('section-welcome').classList.add('hidden');
       document.getElementById('section-dashboard').classList.add('hidden');
+      document.getElementById('section-tasks').classList.add('hidden');
       document.getElementById('section-quiz').classList.remove('hidden');
 
-      // Reset Form Inputs inside Quiz
       document.getElementById('form-quiz').reset();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -918,7 +1413,6 @@
       btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengirim Jawaban...';
 
       try {
-        // Cek ulang ke server sebelum menyimpan untuk mencegah double submit (misal dari 2 tab/perangkat bersamaan)
         await fetchCloudData();
 
         if (hasAlreadySubmitted(currentParticipant.name, currentParticipant.school, currentParticipant.testType)) {
@@ -941,16 +1435,13 @@
           }
         });
 
-        // Simpan skor ke memori, tandai di localStorage & kirimkan ke Google Sheets Database
         saveParticipantResult(currentParticipant.name, currentParticipant.school, currentParticipant.testType, totalScore);
 
-        // Tampilkan notifikasi berhasil
         showAlert(
           'Tes Selesai!',
           `Selamat <b>${currentParticipant.name}</b> (${currentParticipant.school}), Anda telah menyelesaikan ${currentParticipant.testType === 'pre' ? 'Pree-Tes' : 'Post-Tes'}. Total Nilai Anda: <b>${totalScore} / 100</b>.<br><span class="text-xs text-emerald-600 mt-2 block"><i class="fa-solid fa-cloud-arrow-up mr-1"></i> Data nilai berhasil tersimpan secara online.</span>`
         );
 
-        // Sembunyikan formulir soal dan kembali ke halaman utama
         document.getElementById('section-quiz').classList.add('hidden');
         document.getElementById('section-welcome').classList.remove('hidden');
         currentParticipant = null;
@@ -980,7 +1471,8 @@
           name: cleanedName,
           school: cleanedSchool,
           preScore: null,
-          postScore: null
+          postScore: null,
+          taskUrl: ''
         };
         participantsData.push(existing);
       } else {
@@ -997,7 +1489,6 @@
 
       markLocalSubmission(compareName, compareSchool, testType);
 
-      // Sinkronkan ke Google Sheets di background (menggunakan format penulisan asli pengguna)
       if (GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes("AKfycbxXXXXXXXXXXXXX")) {
         fetch(GOOGLE_SCRIPT_URL, {
           method: "POST",
@@ -1015,7 +1506,7 @@
     }
 
     // -------------------------------------------------------------
-    // DASHBOARD / HALAMAN DUA LOGIC, SORTING & PASSWORD
+    // DASHBOARD / HALAMAN NILAI LOGIC, SORTING & PASSWORD
     // -------------------------------------------------------------
     function askDashboardPassword() {
       document.getElementById('input-dashboard-password').value = '';
@@ -1032,7 +1523,6 @@
       if (pass === 'harli') {
         closeDashboardAuthModal();
         
-        // Coba ambil data cloud dengan batas waktu timeout
         try {
           await fetchCloudData();
         } catch (e) {
@@ -1042,6 +1532,7 @@
         renderDashboard();
         document.getElementById('section-welcome').classList.add('hidden');
         document.getElementById('section-quiz').classList.add('hidden');
+        document.getElementById('section-tasks').classList.add('hidden');
         document.getElementById('section-dashboard').classList.remove('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
@@ -1072,7 +1563,7 @@
           const bHas = b.preScore !== null && b.preScore !== undefined && b.preScore !== '';
           const aVal = aHas ? Number(a.preScore) : -Infinity;
           const bVal = bHas ? Number(b.preScore) : -Infinity;
-          return bVal - aVal; // Nilai Pre-Test tertinggi di atas
+          return bVal - aVal;
         });
       } else if (currentSortBy === 'post') {
         list.sort((a, b) => {
@@ -1080,7 +1571,7 @@
           const bHas = b.postScore !== null && b.postScore !== undefined && b.postScore !== '';
           const aVal = aHas ? Number(a.postScore) : -Infinity;
           const bVal = bHas ? Number(b.postScore) : -Infinity;
-          return bVal - aVal; // Nilai Post-Test tertinggi di atas
+          return bVal - aVal;
         });
       } else if (currentSortBy === 'delta') {
         list.sort((a, b) => {
@@ -1090,7 +1581,7 @@
                          (b.postScore !== null && b.postScore !== undefined && b.postScore !== '');
           const aDelta = aValid ? (Number(a.postScore) - Number(a.preScore)) : -Infinity;
           const bDelta = bValid ? (Number(b.postScore) - Number(b.preScore)) : -Infinity;
-          return bDelta - aDelta; // Selisih tertinggi di atas
+          return bDelta - aDelta;
         });
       }
 
@@ -1162,7 +1653,6 @@
         tbody.appendChild(row);
       });
 
-      // Stats Update
       document.getElementById('stat-total-students').innerText = participantsData.length;
       document.getElementById('stat-avg-pre').innerText = countPre > 0 ? (totalPre / countPre).toFixed(1) : '0';
       document.getElementById('stat-avg-post').innerText = countPost > 0 ? (totalPost / countPost).toFixed(1) : '0';
@@ -1182,7 +1672,7 @@
     }
 
     // -------------------------------------------------------------
-    // EXPORT TO EXCEL FEATURE (Mengikuti urutan yang sedang aktif)
+    // EXPORT TO EXCEL FEATURE (NILAI)
     // -------------------------------------------------------------
     function exportToExcel() {
       if (participantsData.length === 0) {
@@ -1210,15 +1700,14 @@
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Hasil Evaluasi");
 
-      // Auto-fit width kolom
       const max_width = excelData.reduce((w, r) => Math.max(w, r["Nama Peserta"].length), 10);
       worksheet["!cols"] = [
-        { wch: 5 },  // No
-        { wch: Math.max(max_width, 20) }, // Nama
-        { wch: 35 }, // Sekolah
-        { wch: 15 }, // Pre
-        { wch: 15 }, // Post
-        { wch: 20 }  // Selisih
+        { wch: 5 },
+        { wch: Math.max(max_width, 20) },
+        { wch: 35 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 20 }
       ];
 
       XLSX.writeFile(workbook, `Rekap_Nilai_Tes_Halut_${new Date().toISOString().slice(0,10)}.xlsx`);
